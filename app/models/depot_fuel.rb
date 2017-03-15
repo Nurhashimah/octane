@@ -14,7 +14,7 @@ class DepotFuel < ActiveRecord::Base
   attr_accessor :tank, :current, :current2, :current3, :supplieds, :issueds #:capacity, :capacity2, :capacity3, #:prev_balance - not use
 
   def month_depot
-    "#{depot.name} "+"#{issue_date.strftime("%b")} "+"#{issue_date.year}"
+    "#{depot.name} - #{issue_date.strftime("%b")} #{issue_date.year}"
   end 
   
   def self.balance_before(depot_fuel)

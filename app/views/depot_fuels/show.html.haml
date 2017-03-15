@@ -28,121 +28,122 @@
   %li= link_to t('fuel_balances.title2'),   '#tab3', data: {toggle: 'tab'}
   %li.active= link_to t('depot_fuels.summary'),'#tab4', data: {toggle: 'tab'} 
   
-#myTabContent.tab-content{:style => "padding-left:50px;"}		
-  #tab1.tab-pane
-    .row
-      .span8
-        %font{:size => "-1"}
-          =t 'helpers.prompt.supplied'
-    .div{:style => "padding: 15px 50px 10px 50px; "}
-    - if @depot_fuel.fuel_supplieds == []
-      = t 'helpers.prompt.no_items'
-    - else
-      %table{:width => "75%"}
-        %thead
-          %tr
-            %th{:align => "left"}= t 'fuel_supplieds.fuel_type_id'
-            %th= t 'fuel_supplieds.quantity'
-            %th= t 'fuel_supplieds.unit_type_id'
-            %th
-        %tbody 
-          - for depot_fuel_supplied in @depot_fuel.fuel_supplieds
+- cache @depot_fuel do  
+  #myTabContent.tab-content{:style => "padding-left:50px;"}		
+    #tab1.tab-pane
+      .row
+        .span8
+          %font{:size => "-1"}
+            =t 'helpers.prompt.supplied'
+      .div{:style => "padding: 15px 50px 10px 50px; "}
+      - if @depot_fuel.fuel_supplieds == []
+        = t 'helpers.prompt.no_items'
+      - else
+        %table{:width => "75%"}
+          %thead
             %tr
-              %td= check_kin {depot_fuel_supplied.fuel_type.name}
-              %td{:align => "center"}= depot_fuel_supplied.quantity
-              %td{:align => "center"}= check_kin {depot_fuel_supplied.unit_type.description}
-              %td 
+              %th{:align => "left"}= t 'fuel_supplieds.fuel_type_id'
+              %th= t 'fuel_supplieds.quantity'
+              %th= t 'fuel_supplieds.unit_type_id'
+              %th
+          %tbody 
+            - for depot_fuel_supplied in @depot_fuel.fuel_supplieds
+              %tr
+                %td= check_kin {depot_fuel_supplied.fuel_type.name}
+                %td{:align => "center"}= depot_fuel_supplied.quantity
+                %td{:align => "center"}= check_kin {depot_fuel_supplied.unit_type.description}
+                %td 
 
     	  
-  #tab2.tab-pane
-    .row
-      .span8
-        %font{:size => "-1"}
-          =t 'helpers.prompt.issued'
-    .div{:style => "padding: 15px 50px 10px 50px; "}
-    - if @depot_fuel.fuel_issueds == []
-      = t 'helpers.prompt.no_items'
-    - else
-      %table{:width => "75%"}
-        %thead
-          %tr
-            %th{:align => "left"}= t 'fuel_issueds.fuel_type_id'
-            %th= t 'fuel_issueds.quantity'
-            %th= t 'fuel_issueds.unit_type_id'
-            %th= t 'fuel_issueds.unit_id'
-            %th
-        %tbody 
-          - for depot_fuel_issued in @depot_fuel.fuel_issueds
+    #tab2.tab-pane
+      .row
+        .span8
+          %font{:size => "-1"}
+            =t 'helpers.prompt.issued'
+      .div{:style => "padding: 15px 50px 10px 50px; "}
+      - if @depot_fuel.fuel_issueds == []
+        = t 'helpers.prompt.no_items'
+      - else
+        %table{:width => "75%"}
+          %thead
             %tr
-              %td= check_kin {depot_fuel_issued.fuel_type.name}
-              %td{:align => "center"}= depot_fuel_issued.quantity
-              %td{:align => "center"}= check_kin {depot_fuel_issued.unit_type.description}
-              %td{:align => "center"}= check_kin {depot_fuel_issued.receiver.name}
-              %td 
+              %th{:align => "left"}= t 'fuel_issueds.fuel_type_id'
+              %th= t 'fuel_issueds.quantity'
+              %th= t 'fuel_issueds.unit_type_id'
+              %th= t 'fuel_issueds.unit_id'
+              %th
+          %tbody 
+            - for depot_fuel_issued in @depot_fuel.fuel_issueds
+              %tr
+                %td= check_kin {depot_fuel_issued.fuel_type.name}
+                %td{:align => "center"}= depot_fuel_issued.quantity
+                %td{:align => "center"}= check_kin {depot_fuel_issued.unit_type.description}
+                %td{:align => "center"}= check_kin {depot_fuel_issued.receiver.name}
+                %td 
   
-  #tab3.tab-pane
-    .row
-      .span8
-        %font{:size => "-1"}
-          =t 'helpers.prompt.balance'
-    .div{:style => "padding: 15px 50px 10px 50px; "}
-    - if @depot_fuel.fuel_balances == []
-      = t 'helpers.prompt.no_items'
-    - else
-      %table{:width => "75%"}
-        %thead
-          %tr
-            %th{:align => "left"}= t 'fuel_balances.fuel_tank_id'
-            %th= t 'fuel_balances.current'
-            %th= t 'fuel_balances.unit_type_id'
-            %th
-        %tbody 
-          - for depot_fuel_balance in @depot_fuel.fuel_balances
+    #tab3.tab-pane
+      .row
+        .span8
+          %font{:size => "-1"}
+            =t 'helpers.prompt.balance'
+      .div{:style => "padding: 15px 50px 10px 50px; "}
+      - if @depot_fuel.fuel_balances == []
+        = t 'helpers.prompt.no_items'
+      - else
+        %table{:width => "75%"}
+          %thead
             %tr
-              %td= check_kin {depot_fuel_balance.fuel_tank.fuel_tank_type}
-              %td{:align => "center"}= depot_fuel_balance.current
-              %td{:align => "center"}= check_kin {depot_fuel_balance.unit_type.description}
-              %td 
+              %th{:align => "left"}= t 'fuel_balances.fuel_tank_id'
+              %th= t 'fuel_balances.current'
+              %th= t 'fuel_balances.unit_type_id'
+              %th
+          %tbody 
+            - for depot_fuel_balance in @depot_fuel.fuel_balances
+              %tr
+                %td= check_kin {depot_fuel_balance.fuel_tank.fuel_tank_type}
+                %td{:align => "center"}= depot_fuel_balance.current
+                %td{:align => "center"}= check_kin {depot_fuel_balance.unit_type.description}
+                %td 
 
-  #tab4.tab-pane.active
-    .row
-      .span8
-        %font{:size => "-1"}
-          =t 'helpers.prompt.summary'
-    .div{:style => "padding: 15px 50px 10px 50px; "}
-      %table{:width => "75%"}
-        %thead
+    #tab4.tab-pane.active
+      .row
+        .span8
+          %font{:size => "-1"}
+            =t 'helpers.prompt.summary'
+      .div{:style => "padding: 15px 50px 10px 50px; "}
+        %table{:width => "75%"}
+          %thead
+            %tr
+              %th{:align => "left"}= t 'depot_fuels.fuel_type' 
+              %th= t 'depot_fuels.start_bal' 
+              %th= t 'depot_fuels.received' 
+              %th= t 'depot_fuels.issued' 
+              %th= t 'depot_fuels.tank_bal' 
+              %th= t 'depot_fuels.end_bal' 
+              %th
+          %tbody
+          - @bal_before=DepotFuel.balance_before(@depot_fuel)
+          - @just_count=0		  
+          - @depot_fuel.depot.fuel_tanks.where("capacity > ? AND fuel_type_id IN (?)", 0, @depot_fuel.fuel_supplieds.map(&:fuel_type_id)).group_by(&:fuel_type_id).sort.each do |fuel_type, items|
+            %tr
+              %td=FuelType.find(fuel_type).name
+              %td{:align => "center"}=@bal_before[@just_count].to_i
+              %td{:align => "center"}=@supplied=@depot_fuel.supplied(fuel_type)
+              %td{:align => "center"}=@issued=@depot_fuel.issued(fuel_type)
+              %td{:align => "center"}=@balance=@depot_fuel.balance(fuel_type) 
+              %td{:align => "center"}=@bal_after =(@bal_before[@just_count].to_i+@supplied-@issued).to_i
+              %td 
+                - if @balance!=@bal_after
+                  %font{:color => "red"} *    
+            - @just_count+=1
           %tr
-            %th{:align => "left"}= t 'depot_fuels.fuel_type' 
-            %th= t 'depot_fuels.start_bal' 
-            %th= t 'depot_fuels.received' 
-            %th= t 'depot_fuels.issued' 
-            %th= t 'depot_fuels.tank_bal' 
-            %th= t 'depot_fuels.end_bal' 
-            %th
-        %tbody
-        - @bal_before=DepotFuel.balance_before(@depot_fuel)
-        - @just_count=0		  
-        - @depot_fuel.depot.fuel_tanks.where("capacity > ? AND fuel_type_id IN (?)", 0, @depot_fuel.fuel_supplieds.map(&:fuel_type_id)).group_by(&:fuel_type_id).sort.each do |fuel_type, items|
-          %tr
-            %td=FuelType.find(fuel_type).name
-            %td{:align => "center"}=@bal_before[@just_count].to_i
-            %td{:align => "center"}=@supplied=@depot_fuel.supplied(fuel_type)
-            %td{:align => "center"}=@issued=@depot_fuel.issued(fuel_type)
-            %td{:align => "center"}=@balance=@depot_fuel.balance(fuel_type) 
-            %td{:align => "center"}=@bal_after =(@bal_before[@just_count].to_i+@supplied-@issued).to_i
-            %td 
+            %td{:colspan => 7} 
               - if @balance!=@bal_after
-                %font{:color => "red"} *    
-          - @just_count+=1
-        %tr
-          %td{:colspan => 7} 
-            - if @balance!=@bal_after
-              %font{:color => "red"} *
-              %b= t 'depot_fuels.tank_bal' 
-              = t 'depot_fuels.and' 
-              %b= t 'depot_fuels.end_bal' 
-              = t 'depot_fuels.must_match'
+                %font{:color => "red"} *
+                %b= t 'depot_fuels.tank_bal' 
+                = t 'depot_fuels.and' 
+                %b= t 'depot_fuels.end_bal' 
+                = t 'depot_fuels.must_match'
 %br
 .form-actions
   .btn.btn-default= link_to content_tag(:i, "", class: "fa fa-arrow-left ") + " " + t('.back', :default => t("helpers.links.back")), depot_fuels_path
