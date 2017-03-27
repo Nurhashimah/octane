@@ -43,14 +43,10 @@
     - else
       = t 'report.depot_usage_current'
 
-- fuel_types=FuelType.where(shortname: ['PETROL', 'DIESEL', 'AVTUR', 'AVCAT']).pluck(:id)  #[1,2,5,12]
+- days_count=Time.days_in_month(Date.today.month, Date.today.year)
+- fuel_types=FuelType.where(shortname: ['PETROL', 'DIESEL', 'AVTUR', 'AVCAT'])
 - fuel_types.each do |ftype|
-  - total_bal_start=0
-  - total_supplieds=0
-  - total_issueds=0
-  - total_current=0
-  - total_average=0
-  =FuelType.find(ftype).name
+  =ftype.name
   %table.table.table-bordered
     %thead
       %tr
@@ -64,49 +60,29 @@
         %th= t 'depot_fuels.usage_average'
     %tbody
       - @monthly_usage.sort_by{|x|[x.unit_id, x.issue_date]}.each_with_index do |depot_fuel, index|
-        - tank_ids=FuelTank.where(fuel_type_id: ftype).where(unit_id: depot_fuel.unit_id).pluck(:id)
-        - days_count=Time.days_in_month(Date.today.month, Date.today.year)
-        %tr
-          %td=index+1
-          %td= check_kin {depot_fuel.depot.unit_details}
-          %td= check_kin {l(depot_fuel.issue_date)}
-          - last_prev_depot_fuel=DepotFuel.where( "issue_date < ? ", depot_fuel.issue_date).where(unit_id: depot_fuel.unit_id).last
-          /- if @last_prev_depot_fuel
-          - if last_prev_depot_fuel
-            /- bal_start=@last_prev_depot_fuel.fuel_balances.where(fuel_tank_id: tank_ids).sum(:current)
-            - bal_start=last_prev_depot_fuel.fuel_balances.where(fuel_tank_id: tank_ids).sum(:current)
-          - else
-            - bal_start=0
-          %td.right= bal_start
-          %td.right= supplieds=depot_fuel.fuel_supplieds.where(fuel_type_id: ftype).sum(:quantity)
-          %td.right= issueds=depot_fuel.fuel_issueds.where(fuel_type_id: ftype).sum(:quantity)
-          %td.right= current=depot_fuel.fuel_balances.where(fuel_tank_id: tank_ids).sum(:current) 
-          - average=issueds/days_count
-          %td.right=number_with_precision(average, precision: 2)
-          - total_bal_start+=bal_start
-          - total_supplieds+=supplieds
-          - total_issueds+=issueds
-          - total_current+=current
-          - total_average+=average
+        - tank_ids=ftype.fuel_tanks.pluck(:id)
+        - cache "depotfuel-#{depot_fuel.id}/#{ftype.name}-#{depot_fuel.updated_at.to_i}" do
+          /display depot_fuel lines accordingly
+          %tr
+            %td=index+1
+            %td= check_kin {depot_fuel.depot.unit_details}
+            %td= check_kin {l(depot_fuel.issue_date)}
+            %td.right=DepotFuel.where( "issue_date < ? ", depot_fuel.issue_date).where(unit_id: depot_fuel.unit_id).last.fuel_balances.where(fuel_tank_id: tank_ids).sum(:current) rescue 0
+            %td.right=depot_fuel.fuel_supplieds.where(fuel_type_id: ftype).sum(:quantity)
+            %td.right=issueds=depot_fuel.fuel_issueds.where(fuel_type_id: ftype).sum(:quantity)
+            %td.right=depot_fuel.fuel_balances.where(fuel_tank_id: tank_ids).sum(:current) 
+            %td.right=number_with_precision(issueds/days_count, precision: 2)
+        
+      /Display - Total lines   
+      - a=0
+      -@monthly_usage.each{|x|a+=DepotFuel.where( "issue_date < ? ", x.issue_date).where(unit_id: x.unit_id).last.fuel_balances.where(fuel_tank_id:  ftype.fuel_tanks.pluck(:id)).sum(:current) rescue 0}
       %tr
         %th.right{colspan: 3}= (t 'depot_fuels.total').upcase
-        %td.right=total_bal_start
-        %td.right=total_supplieds
-        %td.right=total_issueds
-        %td.right=total_current
-        %td.right=number_with_precision(total_average, precision: 2)
+        %td.right=a
+        %td.right=FuelSupplied.where(fuel_type_id: ftype).where(depot_fuel_id: @monthly_usage.pluck(:id)).sum(:quantity)
+        %td.right=total_issueds=FuelIssued.where(fuel_type_id: ftype).where(depot_fuel_id: @monthly_usage.pluck(:id)).sum(:quantity)
+        %td.right=FuelBalance.where(fuel_tank_id: ftype.fuel_tanks.pluck(:id)).where(depot_fuel_id: @monthly_usage.pluck(:id)).sum(:current)
+        %td.right=number_with_precision(total_issueds/days_count, precision: 2) 
+      
 
-
-
-             
-
-
-
-
-
-
-
-
-
-
-
+/ref UAT : set to 31days / current month

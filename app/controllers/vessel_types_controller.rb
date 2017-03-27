@@ -1,5 +1,12 @@
 class VesselTypesController < ApplicationController
   before_action :set_vessel_type, only: [:show, :edit, :update, :destroy]
+  
+  # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = VesselType.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
 
   # GET /vessel_types
   # GET /vessel_types.json

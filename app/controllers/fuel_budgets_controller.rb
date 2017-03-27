@@ -1,6 +1,18 @@
 class FuelBudgetsController < ApplicationController
   filter_access_to :all, :except => [:annual_budget, :budget_vs_usage, :budget_vs_usage_list]
   before_action :set_fuel_budget, only: [:show, :edit, :update, :destroy]
+  
+  # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = FuelBudget.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  caches_action :show, :cache_path => proc {|c|
+      timestamp = FuelBudget.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
 
   # GET /fuel_budgets
   # GET /fuel_budgets.json
@@ -37,7 +49,6 @@ class FuelBudgetsController < ApplicationController
   # POST /fuel_budgets.json
   def create
     @fuel_budget = FuelBudget.new(fuel_budget_params)
-
     respond_to do |format|
       if @fuel_budget.save
         format.html { redirect_to @fuel_budget, notice: 'Fuel budget was successfully created.' }

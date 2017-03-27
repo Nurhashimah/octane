@@ -2,6 +2,18 @@ class IndenUsagesController < ApplicationController
   filter_resource_access
   before_action :set_inden_usage, only: [:show, :edit, :update, :destroy]
 
+  # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = IndenUsage.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  caches_action :show, :cache_path => proc {|c|
+      timestamp = IndenUsage.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+
   # GET /inden_usages
   # GET /inden_usages.json
   def index
@@ -40,7 +52,6 @@ class IndenUsagesController < ApplicationController
   # POST /inden_usages.json
   def create
     @inden_usage = IndenUsage.new(inden_usage_params)
-
     respond_to do |format|
       if @inden_usage.save
         format.html { redirect_to @inden_usage, notice: (t 'inden_usages.title2')+(t 'actions.created') }

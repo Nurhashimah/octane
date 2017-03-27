@@ -1,6 +1,22 @@
+require 'digest/sha1'
+
 class FuelLimitsController < ApplicationController
   filter_resource_access
   before_action :set_fuel_limit, only: [:show, :edit, :update, :destroy]
+
+  # caches_action :index, :show    #step 1 : https://www.sitepoint.com/caching-cache-digest/
+  # use below (replacing step 1, 2a, 2b & 2c) - for auto expiry caches & ransack search to works - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = FuelLimit.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  # use below (replacing step 1 & 2bii)
+  caches_action :show, :cache_path => proc {|c|
+      timestamp = FuelLimit.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
 
   # GET /fuel_limits
   # GET /fuel_limits.json
@@ -37,7 +53,7 @@ class FuelLimitsController < ApplicationController
   # POST /fuel_limits.json
   def create
     @fuel_limit = FuelLimit.new(fuel_limit_params)
-
+    #expire_action :action => :index     #step 2a : https://www.sitepoint.com/caching-cache-digest/
     respond_to do |format|
       if @fuel_limit.save
         format.html { redirect_to @fuel_limit, notice: 'Fuel limit was successfully created.' }
@@ -52,6 +68,8 @@ class FuelLimitsController < ApplicationController
   # PATCH/PUT /fuel_limits/1
   # PATCH/PUT /fuel_limits/1.json
   def update
+    #expire_action :action => :index     #step 2b : https://www.sitepoint.com/caching-cache-digest/
+    #expire_action :action => :show     #step 2bii : https://www.sitepoint.com/caching-cache-digest/
     respond_to do |format|
       if @fuel_limit.update(fuel_limit_params)
 
@@ -71,6 +89,7 @@ class FuelLimitsController < ApplicationController
   # DELETE /fuel_limits/1.json
   def destroy
     @fuel_limit.destroy
+    #expire_action :action => :index     #step 2c : https://www.sitepoint.com/caching-cache-digest/
     respond_to do |format|
       format.html { redirect_to fuel_limits_url, notice: 'Fuel limit was successfully destroyed.' }
       format.json { head :no_content }

@@ -77,11 +77,13 @@
       %th=t 'vessels.name'
       %th= t 'unit_fuels.quantity'
   %tbody
-    - @vessels.group_by(&:unit).each do |unit, vessel_usages|
+    - @vessels.group_by(&:unit).each do |vessel_unit, vessel_usages|
       %tr
-        %td=unit.vessel.pennent_no
-        %td=unit.name
-        %td=litres(vessel_usages.sum(&:d_vessel))
+        - cache vessel_unit do 
+          %td=vessel_unit.vessel.pennent_no
+          %td=vessel_unit.name
+        - cache vessel_usages do
+          %td=litres(vessel_usages.sum(&:d_vessel))
   
 %table.table.table-bordered
   %thead
@@ -92,20 +94,24 @@
       %th=t 'vessels.name'
       %th= t 'unit_fuels.quantity'
   %tbody
-    - @avcat_vessel.group_by{|x|x.unit_fuel.unit}.each do |unit, avcats|
+    - @avcat_vessel.group_by{|x|x.unit_fuel.unit}.each do |v_avcat, avcat_vessels|
       %tr
-        %td= unit.vessel.pennent_no
-        %td= unit.name
-        %td=avcats.sum(&:quantity)
+        - cache v_avcat do
+          %td= v_avcat.vessel.pennent_no
+          %td= v_avcat.name
+        - cache avcat_vessels do
+          %td=avcat_vessels.sum(&:quantity)
     %tr
       %th{colspan: "3"}= t 'report.avcat_others'
     %tr
       %th{colspan: "2"}= t 'fuel_tanks.unit_id'
       %th Amount
-    - @avcat_others.group_by{|x|x.unit_fuel.unit}.each do |unit, avcats|
+    - @avcat_others.group_by{|x|x.unit_fuel.unit}.each do |o_avcat, avcat_others|
       %tr
-        %td{colspan: "2"}= unit.name
-        %td=avcats.sum(&:quantity)
+        - cache o_avcat do
+          %td{colspan: "2"}= o_avcat.name
+        - cache avcat_others do
+          %td=avcat_others.sum(&:quantity)
 
 %table.table.table-bordered
   %thead
@@ -116,17 +122,21 @@
       %th=t 'vessels.name'
       %th= t 'unit_fuels.quantity'
   %tbody
-    - @avtur_vessel.group_by{|x|x.unit_fuel.unit}.each do |unit, avturs|
+    - @avtur_vessel.group_by{|x|x.unit_fuel.unit}.each do |v_avtur, avtur_vessels|
       %tr
-        %td= unit.vessel.pennent_no
-        %td= unit.name
-        %td=avturs.sum(&:quantity)
+        - cache v_avtur do
+          %td= v_avtur.vessel.pennent_no
+          %td= v_avtur.name
+        - cache avtur_vessels do
+          %td=avtur_vessels.sum(&:quantity)
     %tr
       %th{colspan: "3"}= t 'report.avtur_others'
     %tr
       %th{colspan: "2"}= t 'fuel_tanks.unit_id'
       %th= t 'unit_fuels.quantity'
-    - @avtur_others.group_by{|x|x.unit_fuel.unit}.each do |unit, avturs|
+    - @avtur_others.group_by{|x|x.unit_fuel.unit}.each do |o_avtur, avtur_others|
       %tr
-        %td{colspan: "2"}= unit.name
-        %td=avturs.sum(&:quantity)
+        - cache o_avtur do
+          %td{colspan: "2"}= o_avtur.name
+        - cache avtur_others do
+          %td=avtur_others.sum(&:quantity)

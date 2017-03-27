@@ -1,7 +1,19 @@
 class ExternalSuppliedsController < ApplicationController
   filter_resource_access
   before_action :set_external_supplied, only: [:show, :edit, :update, :destroy]
-
+  
+  # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = ExternalSupplied.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  caches_action :show, :cache_path => proc {|c|
+      timestamp = ExternalSupplied.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  
   # GET /external_supplieds
   # GET /external_supplieds.json
   def index
@@ -41,7 +53,6 @@ class ExternalSuppliedsController < ApplicationController
   # POST /external_supplieds.json
   def create
     @external_supplied = ExternalSupplied.new(external_supplied_params)
-
     respond_to do |format|
       if @external_supplied.save
         format.html { redirect_to @external_supplied, notice: 'External supplied was successfully created.' }

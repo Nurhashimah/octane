@@ -1,6 +1,6 @@
 class IndenUsage < ActiveRecord::Base
   belongs_to :inden_card, foreign_key: "inden_card_id"
-  belongs_to :unit_fuel, foreign_key: "unit_fuel_id"
+  belongs_to :unit_fuel, foreign_key: "unit_fuel_id", touch: true
   
   def self.search_by_role(is_admin, staffid)
     if is_admin== "1"

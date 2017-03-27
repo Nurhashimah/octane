@@ -22,107 +22,108 @@
               %span.input-group-btn
                 %button.btn.btn-default{:type => "submit", :style => "height:34px;"}
                   %i.glyphicon.glyphicon-search
-/Diesel Usage
-%BR
-%BR
-  %h4
-    - if params[:search].present? 
-      - if !params[:search][:start_date].present? && !params[:search][:end_date].present?
+- cache @summary do
+  /Diesel Usage
+  %BR
+  %BR
+    %h4
+      - if params[:search].present? 
+        - if !params[:search][:start_date].present? && !params[:search][:end_date].present?
+          = t 'report.diesel_usage_current'
+        - else
+          = t 'report.diesel_usage_for'
+          - if params[:search][:start_date].present? 
+            = Date.parse(params[:search][:start_date]).strftime('%d-%m-%Y')
+          - else
+            = (Date.today.beginning_of_month).strftime('%d-%m-%Y')
+          \-
+          - if params[:search][:end_date].present?
+            = Date.parse(params[:search][:end_date]).strftime('%d-%m-%Y')
+          - else
+            = (Date.today.end_of_day).strftime('%d-%m-%Y')
+      - else
         = t 'report.diesel_usage_current'
-      - else
-        = t 'report.diesel_usage_for'
-        - if params[:search][:start_date].present? 
-          = Date.parse(params[:search][:start_date]).strftime('%d-%m-%Y')
-        - else
-          = (Date.today.beginning_of_month).strftime('%d-%m-%Y')
-        \-
-        - if params[:search][:end_date].present?
-          = Date.parse(params[:search][:end_date]).strftime('%d-%m-%Y')
-        - else
-          = (Date.today.end_of_day).strftime('%d-%m-%Y')
-    - else
-      = t 'report.diesel_usage_current'
 
-%table.table.table-bordered
-  %thead
-    %tr
-      %th No
-      %th= t 'unit_fuels.unit_id'
-      %th= t 'unit_fuels.issue_date'
-      %th= t 'unit_fuels.d_vessel'
-      %th= t 'unit_fuels.d_vehicle'
-      %th= t 'unit_fuels.d_misctool'
-      %th= t 'unit_fuels.d_boat'
-      %th=( t 'unit_fuels.diesel_usage_unit')
-
-  %tbody
-    - @summary.sort_by{|x|[x.unit.name, x.issue_date]}.each_with_index do |unit_fuel, index|
+  %table.table.table-bordered
+    %thead
       %tr
-        %td=index+1
-        %td= check_kin {unit_fuel.unit.name}
-        %td= check_kin {l(unit_fuel.issue_date)}
-        %td= unit_fuel.d_vessel
-        %td= unit_fuel.d_vehicle
-        %td= unit_fuel.d_misctool
-        %td= unit_fuel.d_boat
-        %td= UnitFuel.diesel_usage(unit_fuel)
+        %th No
+        %th= t 'unit_fuels.unit_id'
+        %th= t 'unit_fuels.issue_date'
+        %th= t 'unit_fuels.d_vessel'
+        %th= t 'unit_fuels.d_vehicle'
+        %th= t 'unit_fuels.d_misctool'
+        %th= t 'unit_fuels.d_boat'
+        %th=( t 'unit_fuels.diesel_usage_unit')
 
-    %tr
-      %th{colspan: "3"}= t 'unit_fuels.diesel_usage_type'
-      %td=a=@summary.sum(:d_vessel)
-      %td=b=@summary.sum(:d_vehicle)
-      %td=c=@summary.sum(:d_misctool)
-      %td=d=@summary.sum(:d_boat)
-      %th= litres(a+b+c+d)
-/Petrol Usage
-%BR
-%BR
-  %h4
-    - if params[:search].present? 
-      - if !params[:search][:start_date].present? && !params[:search][:end_date].present?
+    %tbody
+      - @summary.sort_by{|x|[x.unit.name, x.issue_date]}.each_with_index do |unit_fuel, index|
+        %tr
+          %td=index+1
+          %td= check_kin {unit_fuel.unit.name}
+          %td= check_kin {l(unit_fuel.issue_date)}
+          %td= unit_fuel.d_vessel
+          %td= unit_fuel.d_vehicle
+          %td= unit_fuel.d_misctool
+          %td= unit_fuel.d_boat
+          %td= UnitFuel.diesel_usage(unit_fuel)
+
+      %tr
+        %th{colspan: "3"}= t 'unit_fuels.diesel_usage_type'
+        %td=a=@summary.sum(:d_vessel)
+        %td=b=@summary.sum(:d_vehicle)
+        %td=c=@summary.sum(:d_misctool)
+        %td=d=@summary.sum(:d_boat)
+        %th= litres(a+b+c+d)
+  /Petrol Usage
+  %BR
+  %BR
+    %h4
+      - if params[:search].present? 
+        - if !params[:search][:start_date].present? && !params[:search][:end_date].present?
+          = t 'report.petrol_usage_current'
+        - else
+          = t 'report.petrol_usage_for'
+          - if params[:search][:start_date].present? 
+            = Date.parse(params[:search][:start_date]).strftime('%d-%m-%Y')
+          - else
+            = (Date.today.beginning_of_month).strftime('%d-%m-%Y')
+          \-
+          - if params[:search][:end_date].present?
+            = Date.parse(params[:search][:end_date]).strftime('%d-%m-%Y')
+          - else
+            = (Date.today.end_of_day).strftime('%d-%m-%Y')
+      - else
         = t 'report.petrol_usage_current'
-      - else
-        = t 'report.petrol_usage_for'
-        - if params[:search][:start_date].present? 
-          = Date.parse(params[:search][:start_date]).strftime('%d-%m-%Y')
-        - else
-          = (Date.today.beginning_of_month).strftime('%d-%m-%Y')
-        \-
-        - if params[:search][:end_date].present?
-          = Date.parse(params[:search][:end_date]).strftime('%d-%m-%Y')
-        - else
-          = (Date.today.end_of_day).strftime('%d-%m-%Y')
-    - else
-      = t 'report.petrol_usage_current'
 
-%table.table.table-bordered
-  %thead
-    %tr
-      %th No
-      %th= t 'unit_fuels.unit_id'
-      %th= t 'unit_fuels.issue_date'
-      %th= t 'unit_fuels.d_vehicle'
-      %th= t 'unit_fuels.d_misctool'
-      %th= t 'unit_fuels.d_boat'
-      %th= t 'unit_fuels.petrol_usage_unit'
-
-  %tbody
-    - @summary.sort_by{|x|[x.unit.name, x.issue_date]}.each_with_index do |unit_fuel, index|
+  %table.table.table-bordered
+    %thead
       %tr
-        %td= index+1
-        %td= check_kin {unit_fuel.unit.name}
-        %td= check_kin {l(unit_fuel.issue_date)}
-        %td= unit_fuel.p_vehicle
-        %td= unit_fuel.p_misctool
-        %td= unit_fuel.p_boat
-        %td= UnitFuel.petrol_usage(unit_fuel)
+        %th No
+        %th= t 'unit_fuels.unit_id'
+        %th= t 'unit_fuels.issue_date'
+        %th= t 'unit_fuels.d_vehicle'
+        %th= t 'unit_fuels.d_misctool'
+        %th= t 'unit_fuels.d_boat'
+        %th= t 'unit_fuels.petrol_usage_unit'
 
-    %tr
-      %th{colspan: "3"}= t 'unit_fuels.petrol_usage_type'
-      %td=e=@summary.sum(:p_vehicle)
-      %td=f=@summary.sum(:p_misctool)
-      %td=g=@summary.sum(:p_boat)
-      %th= litres(e+f+g)
+    %tbody
+      - @summary.sort_by{|x|[x.unit.name, x.issue_date]}.each_with_index do |unit_fuel, index|
+        %tr
+          %td= index+1
+          %td= check_kin {unit_fuel.unit.name}
+          %td= check_kin {l(unit_fuel.issue_date)}
+          %td= unit_fuel.p_vehicle
+          %td= unit_fuel.p_misctool
+          %td= unit_fuel.p_boat
+          %td= UnitFuel.petrol_usage(unit_fuel)
+
+      %tr
+        %th{colspan: "3"}= t 'unit_fuels.petrol_usage_type'
+        %td=e=@summary.sum(:p_vehicle)
+        %td=f=@summary.sum(:p_misctool)
+        %td=g=@summary.sum(:p_boat)
+        %th= litres(e+f+g)
 
 /AVTUR Usage
 %br
@@ -154,18 +155,19 @@
       %th= t 'unit_fuels.unit_type_id'
 
   %tbody
-    - @avtur.sort_by{|x|[x.unit_fuel.unit.name, x.unit_fuel.issue_date]}.each_with_index do |avtur, index|
-      %tr
-        %td= index+1
-        %td= check_kin {avtur.unit_fuel.unit.name}
-        %td= check_kin {l(avtur.unit_fuel.issue_date)}
-        %td= avtur.quantity
-        %td= avtur.unit_type.description
+    - cache @avtur do
+      - @avtur.sort_by{|x|[x.unit_fuel.unit.name, x.unit_fuel.issue_date]}.each_with_index do |avtur, index|
+        %tr
+          %td= index+1
+          %td= check_kin {avtur.unit_fuel.unit.name}
+          %td= check_kin {l(avtur.unit_fuel.issue_date)}
+          %td= avtur.quantity
+          %td= avtur.unit_type.description
 
-    %tr
-      %th{colspan: "3"}= t 'unit_fuels.total'
-      %th=litres(@avtur.sum(:quantity))
-      %th
+      %tr
+        %th{colspan: "3"}= t 'unit_fuels.total'
+        %th=litres(@avtur.sum(:quantity))
+        %th
 
 /AVCAT Usage
 %br
@@ -196,18 +198,19 @@
       %th= t 'unit_fuels.unit_type_id'
 
   %tbody
-    - @avcat.sort_by{|x|[x.unit_fuel.unit.name, x.unit_fuel.issue_date]}.each_with_index do |avcat, index|
-      %tr
-        %td= index+1
-        %td= check_kin {avcat.unit_fuel.unit.name}
-        %td= check_kin {l(avcat.unit_fuel.issue_date)}
-        %td= avcat.quantity
-        %td= avcat.unit_type.description
+    - cache @avcat do
+      - @avcat.sort_by{|x|[x.unit_fuel.unit.name, x.unit_fuel.issue_date]}.each_with_index do |avcat, index|
+        %tr
+          %td= index+1
+          %td= check_kin {avcat.unit_fuel.unit.name}
+          %td= check_kin {l(avcat.unit_fuel.issue_date)}
+          %td= avcat.quantity
+          %td= avcat.unit_type.description
 
-    %tr
-      %th{colspan: "3"}= t 'unit_fuels.total'
-      %th=litres(@avcat.sum(:quantity))
-      %th
+      %tr
+        %th{colspan: "3"}= t 'unit_fuels.total'
+        %th=litres(@avcat.sum(:quantity))
+        %th
 
 //LUBRICANT
 %br
@@ -238,19 +241,20 @@
       %th= t 'unit_fuels.quantity'
       %th= t 'unit_fuels.unit_type_id'
   %tbody
-    - @lubricant.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |add_fuel, index|
-      %tr
-        %td= index+1
-        %td= check_kin {add_fuel.unit_fuel.unit.name}
-        %td= check_kin {l(add_fuel.unit_fuel.issue_date)}
-        %td= add_fuel.description
-        %td= add_fuel.quantity.to_i
-        %td= check_kin {add_fuel.unit_type.description}
+    - cache @lubricant do
+      - @lubricant.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |add_fuel, index|
+        %tr
+          %td= index+1
+          %td= check_kin {add_fuel.unit_fuel.unit.name}
+          %td= check_kin {l(add_fuel.unit_fuel.issue_date)}
+          %td= add_fuel.description
+          %td= add_fuel.quantity.to_i
+          %td= check_kin {add_fuel.unit_type.description}
       
-    %tr
-      %th{colspan: "4"}= t 'unit_fuels.total'
-      %th=@lubricant.sum(:quantity)
-      %th
+      %tr
+        %th{colspan: "4"}= t 'unit_fuels.total'
+        %th=@lubricant.sum(:quantity)
+        %th
 
 //GREASE
 %br
@@ -281,18 +285,19 @@
       %th= t 'unit_fuels.quantity'
       %th= t 'unit_fuels.unit_type_id'
   %tbody
-    - @grease.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |add_fuel, index|
+    - cache @grease do
+      - @grease.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |add_fuel, index|
+        %tr
+          %td= index+1
+          %td= check_kin {add_fuel.unit_fuel.unit.name}
+          %td= check_kin {l(add_fuel.unit_fuel.issue_date)}
+          %td= add_fuel.description
+          %td= add_fuel.quantity.to_i
+          %td= check_kin {add_fuel.unit_type.description}   
       %tr
-        %td= index+1
-        %td= check_kin {add_fuel.unit_fuel.unit.name}
-        %td= check_kin {l(add_fuel.unit_fuel.issue_date)}
-        %td= add_fuel.description
-        %td= add_fuel.quantity.to_i
-        %td= check_kin {add_fuel.unit_type.description}   
-    %tr
-      %th{colspan: "4"}= t 'unit_fuels.total'
-      %th=@grease.sum(:quantity)
-      %th
+        %th{colspan: "4"}= t 'unit_fuels.total'
+        %th=@grease.sum(:quantity)
+        %th
 
 /Other Fuels
 %br
@@ -313,53 +318,55 @@
           = (Date.today.end_of_day).strftime('%d-%m-%Y')
     - else
       = t 'report.other_usage_current'
-%table.table.table-bordered
-  %thead
-    %tr
-      %td &nbsp;
-      %td{colspan: "4", style: "font-size:0.8em; padding-top:25px;"}
-        - count=0
-        - @other_fuels.group_by(&:fuel_type).each do |fueltype, add_fuels|
-          =fueltype.shortname+" : "
-          =add_fuels.map(&:quantity).sum
-          - count+=1
-          - if count < @other_fuels.group_by(&:fuel_type).count
-            &nbsp; | &nbsp;
-        - count2=0
-        - if @other_fuels.count == 0
-          - @other_fuels_type.each do |fuel_type_id|
-            =FuelType.where(id: fuel_type_id).first.name+" -  "
-            0.00 litres
-            - count2+=1
-            - if count2 < @other_fuels_type.count
+
+- cache @other_fuels do
+  %table.table.table-bordered
+    %thead
+      %tr
+        %td &nbsp;
+        %td{colspan: "4", style: "font-size:0.8em; padding-top:25px;"}
+          - count=0
+          - @other_fuels.group_by(&:fuel_type).each do |fueltype, add_fuels|
+            =fueltype.shortname+" : "
+            =add_fuels.map(&:quantity).sum
+            - count+=1
+            - if count < @other_fuels.group_by(&:fuel_type).count
               &nbsp; | &nbsp;
-      %td 
-      %td
-    %tr
-      %th No
-      %th= t 'unit_fuels.fuel_type_id'
-      %th= t 'unit_fuels.unit_id'
-      %th= t 'unit_fuels.issue_date'
-      %th= t 'unit_fuels.description'
-      %th= t 'unit_fuels.quantity'
-      %th= t 'unit_fuels.unit_type_id'
-  %tbody
-    - count=0
-    - @other_fuels.group_by(&:fuel_type).each do |fueltype, add_fuels|
-      - add_fuels.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each do |add_fuel|
-        %tr
-          %td= count+=1
-          %td= check_kin {add_fuel.fuel_type.name}
-          %td= check_kin {add_fuel.unit_fuel.unit.name}
-          %td= check_kin {l(add_fuel.unit_fuel.issue_date)}
-          %td= add_fuel.description
-          %td= add_fuel.quantity.to_i
-          %td= check_kin {add_fuel.unit_type.description}
+          - count2=0
+          - if @other_fuels.count == 0
+            - @other_fuels_type.each do |fuel_type_id|
+              =FuelType.where(id: fuel_type_id).first.name+" -  "
+              0.00 litres
+              - count2+=1
+              - if count2 < @other_fuels_type.count
+                &nbsp; | &nbsp;
+        %td 
+        %td
+      %tr
+        %th No
+        %th= t 'unit_fuels.fuel_type_id'
+        %th= t 'unit_fuels.unit_id'
+        %th= t 'unit_fuels.issue_date'
+        %th= t 'unit_fuels.description'
+        %th= t 'unit_fuels.quantity'
+        %th= t 'unit_fuels.unit_type_id'
+    %tbody
+      - count=0
+      - @other_fuels.group_by(&:fuel_type).each do |fueltype, add_fuels|
+        - add_fuels.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each do |add_fuel|
+          %tr
+            %td= count+=1
+            %td= check_kin {add_fuel.fuel_type.name}
+            %td= check_kin {add_fuel.unit_fuel.unit.name}
+            %td= check_kin {l(add_fuel.unit_fuel.issue_date)}
+            %td= add_fuel.description
+            %td= add_fuel.quantity.to_i
+            %td= check_kin {add_fuel.unit_type.description}
       
-    %tr
-      %th{colspan: "5"}= t 'unit_fuels.total'
-      %th=@other_fuels.sum(:quantity)
-      %th
+      %tr
+        %th{colspan: "5"}= t 'unit_fuels.total'
+        %th=@other_fuels.sum(:quantity)
+        %th
 
 /AMBIL DARAT & AMBIL UDARA
 %br
@@ -381,49 +388,50 @@
     - else
       = t 'report.external_supply_current'
 
-%table.table.table-bordered
-  %thead
-    %tr
-      %td &nbsp;
-      - @external_supply.group_by(&:resource).sort.each do |fuel_resource, external_supplieds|
-        %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
-          =fuel_resource.name.upcase+" -  "
-          Petrol : 
-          = check_kin {number_with_precision(((external_supplieds.select {|p| p.fuel_type_id == 1 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
-          litres
-          &nbsp; | &nbsp;
-          Diesel :
-          = check_kin {number_with_precision(((external_supplieds.select {|p| p.fuel_type_id == 2 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
-          litres
-      - if @external_supply.count == 0
-        - if @sources.count > 0
-          - @sources.each do |source|
-            %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
-              =Unit.where(id: source).first.name.upcase+" -  "
-              Petrol : 0.00 litres
-              &nbsp; | &nbsp;
-              Diesel : 0.00 litres
-        - else
-          %td{colspan: "6", style: "font-size:0.8em; padding-top:25px;"}
-    %tr
-      %th No
-      %th= t 'unit_fuels.unit_id'
-      %th= t 'unit_fuels.issue_date'
-      %th= t 'external_supplieds.fuel_type_id'
-      %th= t 'external_supplieds.quantity'
-      %th= t 'external_supplieds.unit_type_id'
-      %th= t 'external_supplieds.source'
-
-  %tbody
-    - @external_supply.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |external_supplied, index|
+- cache @external_supply do
+  %table.table.table-bordered
+    %thead
       %tr
-        %td= index+1
-        %td= check_kin {external_supplied.unit_fuel.unit.name}
-        %td= check_kin {l(external_supplied.unit_fuel.issue_date)}
-        %td= check_kin {external_supplied.fuel_type.name}
-        %td= external_supplied.quantity.to_i
-        %td= check_kin {external_supplied.unit_type.description}
-        %td= external_supplied.resource.try(:name)
+        %td &nbsp;
+        - @external_supply.group_by(&:resource).sort.each do |fuel_resource, external_supplieds|
+          %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
+            =fuel_resource.name.upcase+" -  "
+            Petrol : 
+            = check_kin {number_with_precision(((external_supplieds.select {|p| p.fuel_type_id == 1 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
+            litres
+            &nbsp; | &nbsp;
+            Diesel :
+            = check_kin {number_with_precision(((external_supplieds.select {|p| p.fuel_type_id == 2 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
+            litres
+        - if @external_supply.count == 0
+          - if @sources.count > 0
+            - @sources.each do |source|
+              %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
+                =Unit.where(id: source).first.name.upcase+" -  "
+                Petrol : 0.00 litres
+                &nbsp; | &nbsp;
+                Diesel : 0.00 litres
+          - else
+            %td{colspan: "6", style: "font-size:0.8em; padding-top:25px;"}
+      %tr
+        %th No
+        %th= t 'unit_fuels.unit_id'
+        %th= t 'unit_fuels.issue_date'
+        %th= t 'external_supplieds.fuel_type_id'
+        %th= t 'external_supplieds.quantity'
+        %th= t 'external_supplieds.unit_type_id'
+        %th= t 'external_supplieds.source'
+
+    %tbody
+      - @external_supply.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |external_supplied, index|
+        %tr
+          %td= index+1
+          %td= check_kin {external_supplied.unit_fuel.unit.name}
+          %td= check_kin {l(external_supplied.unit_fuel.issue_date)}
+          %td= check_kin {external_supplied.fuel_type.name}
+          %td= external_supplied.quantity.to_i
+          %td= check_kin {external_supplied.unit_type.description}
+          %td= external_supplied.resource.try(:name)
         
 /BEKAL DARAT & BEKAL UDARA
 %br
@@ -445,49 +453,50 @@
     - else
       = t 'report.external_issue_current'
   
-%table.table.table-bordered
-  %thead
-    %tr
-      %td &nbsp;
-      - @external_issue.group_by(&:resource).sort.each do |fuel_resource, external_issueds|
-        %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
-          =fuel_resource.name.upcase+" -  "
-          Petrol : 
-          = check_kin {number_with_precision(((external_issueds.select {|p| p.fuel_type_id == 1 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
-          litres
-          &nbsp; | &nbsp;
-          Diesel :
-          = check_kin {number_with_precision(((external_issueds.select {|p| p.fuel_type_id == 2 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
-          litres
-      - if @external_issue.count == 0
-        - if @sources.count > 0
-          - @sources.each do |source|
-            %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
-              =Unit.where(id: source).first.name.upcase+" -  "
-              Petrol : 0.00 litres
-              &nbsp; | &nbsp;
-              Diesel : 0.00 litres
-        - else
-          %td{colspan: "6", style: "font-size:0.8em; padding-top:25px;"}
-    %tr
-      %th No
-      %th= t 'unit_fuels.unit_id'
-      %th= t 'unit_fuels.issue_date'
-      %th= t 'external_supplieds.fuel_type_id'
-      %th= t 'external_supplieds.quantity'
-      %th= t 'external_supplieds.unit_type_id'
-      %th= t 'external_supplieds.source'
-
-  %tbody
-    - @external_issue.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |external_issued, index|
+- cache @external_issue do
+  %table.table.table-bordered
+    %thead
       %tr
-        %td= index+1
-        %td= check_kin {external_issued.unit_fuel.unit.name}
-        %td= check_kin {l(external_issued.unit_fuel.issue_date)}
-        %td= check_kin {external_issued.fuel_type.name}
-        %td= external_issued.quantity.to_i
-        %td= check_kin {external_issued.unit_type.description}
-        %td= external_issued.resource.try(:name)
+        %td &nbsp;
+        - @external_issue.group_by(&:resource).sort.each do |fuel_resource, external_issueds|
+          %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
+            =fuel_resource.name.upcase+" -  "
+            Petrol : 
+            = check_kin {number_with_precision(((external_issueds.select {|p| p.fuel_type_id == 1 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
+            litres
+            &nbsp; | &nbsp;
+            Diesel :
+            = check_kin {number_with_precision(((external_issueds.select {|p| p.fuel_type_id == 2 rescue false }).map(&:quantity).inject(:+)).to_f, :precision => 0)}
+            litres
+        - if @external_issue.count == 0
+          - if @sources.count > 0
+            - @sources.each do |source|
+              %td{colspan: "3", style: "font-size:0.8em; padding-top:25px;"}
+                =Unit.where(id: source).first.name.upcase+" -  "
+                Petrol : 0.00 litres
+                &nbsp; | &nbsp;
+                Diesel : 0.00 litres
+          - else
+            %td{colspan: "6", style: "font-size:0.8em; padding-top:25px;"}
+      %tr
+        %th No
+        %th= t 'unit_fuels.unit_id'
+        %th= t 'unit_fuels.issue_date'
+        %th= t 'external_supplieds.fuel_type_id'
+        %th= t 'external_supplieds.quantity'
+        %th= t 'external_supplieds.unit_type_id'
+        %th= t 'external_supplieds.source'
+
+    %tbody
+      - @external_issue.sort_by{|x|[x.unit_fuel.unit, x.unit_fuel.issue_date]}.each_with_index do |external_issued, index|
+        %tr
+          %td= index+1
+          %td= check_kin {external_issued.unit_fuel.unit.name}
+          %td= check_kin {l(external_issued.unit_fuel.issue_date)}
+          %td= check_kin {external_issued.fuel_type.name}
+          %td= external_issued.quantity.to_i
+          %td= check_kin {external_issued.unit_type.description}
+          %td= external_issued.resource.try(:name)
         
 ///
 /Inden Usages
@@ -509,32 +518,34 @@
           = (Date.today.end_of_day).strftime('%d-%m-%Y')
     - else
       = t 'report.inden_usage_current'
-%table.table.table-bordered
-  %thead
-    %tr
-      %td &nbsp;
-      %td{colspan: "4", style: "font-size:0.8em; padding-top:25px;"}
-        Petrol :
-        = @inden_usages.sum(:petrol_ltr)
-        litres
-        &nbsp; | &nbsp;
-        Diesel :
-        = @inden_usages.sum(:diesel_ltr)
-        litres
-    %tr
-      %th No
-      %th{:align => "left"}= t 'inden_cards.card_holder'
-      %th{:align => "left"}= t 'inden_cards.serial_no'
-      %th= t 'inden_usages.petrol_ltr'
-      %th= t 'inden_usages.diesel_ltr'
-  %tbody
-    - count=0
-    - @inden_usages.group_by(&:inden_card).each do |inden_card, usages|
+      
+- cache @inden_usages do
+  %table.table.table-bordered
+    %thead
       %tr
-        %td= count+=1
-        %td= inden_card.serial_no
-        %td
-          = inden_card.unit.name if inden_card.ru_staff==false
-          = inden_card.staff.name if inden_card.ru_staff==true
-        %td=usages.sum(&:petrol_ltr)
-        %td=usages.sum(&:diesel_ltr)
+        %td &nbsp;
+        %td{colspan: "4", style: "font-size:0.8em; padding-top:25px;"}
+          Petrol :
+          = @inden_usages.sum(:petrol_ltr)
+          litres
+          &nbsp; | &nbsp;
+          Diesel :
+          = @inden_usages.sum(:diesel_ltr)
+          litres
+      %tr
+        %th No
+        %th{:align => "left"}= t 'inden_cards.card_holder'
+        %th{:align => "left"}= t 'inden_cards.serial_no'
+        %th= t 'inden_usages.petrol_ltr'
+        %th= t 'inden_usages.diesel_ltr'
+    %tbody
+      - count=0
+      - @inden_usages.group_by(&:inden_card).each do |inden_card, usages|
+        %tr
+          %td= count+=1
+          %td= inden_card.serial_no
+          %td
+            = inden_card.unit.name if inden_card.ru_staff==false
+            = inden_card.staff.name if inden_card.ru_staff==true
+          %td=usages.sum(&:petrol_ltr)
+          %td=usages.sum(&:diesel_ltr)

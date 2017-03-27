@@ -1,5 +1,12 @@
 class FuelTypesController < ApplicationController
   before_action :set_fuel_type, only: [:show, :edit, :update, :destroy]
+  
+  # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = FuelType.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
 
   # GET /fuel_types
   # GET /fuel_types.json

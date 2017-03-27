@@ -2,6 +2,18 @@ class FuelIssuedsController < ApplicationController
   filter_resource_access
   before_action :set_fuel_issued, only: [:show, :edit, :update, :destroy]
 
+  # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
+  caches_action :index, :cache_path => proc {|c|
+      timestamp = FuelIssued.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  caches_action :show, :cache_path => proc {|c|
+      timestamp = FuelLimit.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      string = timestamp.to_s + c.params.inspect
+      {:tag => Digest::SHA1.hexdigest(string)}
+  }
+  
   # GET /fuel_issueds
   # GET /fuel_issueds.json
   def index
@@ -39,7 +51,6 @@ class FuelIssuedsController < ApplicationController
   # POST /fuel_issueds.json
   def create
     @fuel_issued = FuelIssued.new(fuel_issued_params)
-
     respond_to do |format|
       if @fuel_issued.save
         format.html { redirect_to @fuel_issued, notice: (t 'fuel_issueds.title')+(t 'actions.created') }
