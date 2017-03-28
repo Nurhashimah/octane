@@ -21,7 +21,7 @@ class Unit < ActiveRecord::Base
   validates_presence_of :shortname, :name, :code
   validates_uniqueness_of :shortname
 
-  scope :is_depot, -> { where("id IN(?)",FuelTank.pluck(:unit_id)) }
+  scope :is_depot, -> { where("id IN(?)",FuelTank.pluck(:unit_id).uniq) }
   
   def set_combo_code
     if ancestry_depth == 0
@@ -35,6 +35,20 @@ class Unit < ActiveRecord::Base
 
   def unit_details
     "#{shortname} " + "#{name}"
+  end
+  
+  def unit_status
+    if Unit.is_depot.include?(id)
+      "depoh"
+    else
+      "jabatan"
+    end
+  end
+  
+  def self.status_list
+    arr=[[ I18n.t('helpers.prompt.select_unit'),"", {'data'=>""}]]
+    Unit.all.order(:name).each{|u| arr << [u.name, u.id, {'data' => u.unit_status}]}
+    arr
   end
 
    def self.get_rmn_unit(unitname)

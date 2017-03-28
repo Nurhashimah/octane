@@ -1,11 +1,12 @@
 %fieldset
   .form-inline{role: "form"}
-    = f.collection_select :fuel_tank_id, FuelTank.where("capacity > ?", 0).order(:id), :id, :fuel_tank_details, :include_blank => (t 'helpers.prompt.select_fuel_tank'), :html_options => {:class => 'selectpicker'}
-    = f.text_field :current, :class => 'text_field input-small', :placeholder => 'Quantity'
-    = f.collection_select :unit_type_id, UnitType.all, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
-    = f.hidden_field :_destroy
-    /not working yet - 1 Sept 2015
-    //= link_to_remove_fields (fa_icon "trash-o"), f     
-    //= link_to "Remove", "javascript:void(0);", :id => "remove_link"
-    //= link_to "Remove", "#", :onclick => "test( \"#{f.object}\");"
-    /= link_to "Remove", "#", :onclick => "test(this);"
+    - cache "depot_fuel-#{@depot_fuel.id}/fuel_balance-#{f.object.id}" do 
+      = f.collection_select :fuel_tank_id, FuelTank.where("capacity > ?", 0).order(:id), :id, :fuel_tank_details, :include_blank => (t 'helpers.prompt.select_fuel_tank'), :html_options => {:class => 'selectpicker'}
+      = f.text_field :current, :class => 'text_field input-small', :placeholder => 'Quantity'
+      = f.collection_select :unit_type_id, UnitType.all, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
+      = f.hidden_field :_destroy
+      /not working yet - 1 Sept 2015
+      //= link_to_remove_fields (fa_icon "trash-o"), f     
+      //= link_to "Remove", "javascript:void(0);", :id => "remove_link"
+      //= link_to "Remove", "#", :onclick => "test( \"#{f.object}\");"
+      /= link_to "Remove", "#", :onclick => "test(this);"

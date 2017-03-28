@@ -123,7 +123,7 @@
               %th
           %tbody
           - @bal_before=DepotFuel.balance_before(@depot_fuel)
-          - @just_count=0		  
+          - @just_count=0
           - @depot_fuel.depot.fuel_tanks.where("capacity > ? AND fuel_type_id IN (?)", 0, @depot_fuel.fuel_supplieds.map(&:fuel_type_id)).group_by(&:fuel_type_id).sort.each do |fuel_type, items|
             %tr
               %td=FuelType.find(fuel_type).name

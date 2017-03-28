@@ -1,52 +1,53 @@
 = form_for @fuel_transaction, :html => { :class => 'form-horizontal' } do |f|
-  = f.hidden_field :transaction_type, value: @fuel_transaction.transaction_type
-  = f.hidden_field :created_by, value: current_user.id
-  - if @fuel_transaction.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@fuel_transaction.errors.count, "error")} prohibited this fuel_transaction from being saved:"
-      %ul
-        - @fuel_transaction.errors.full_messages.each do |msg|
-          %li= msg
+  - cache "fuel_transaction/#{@fuel_transaction.id}-usage" do
+    = f.hidden_field :transaction_type, value: @fuel_transaction.transaction_type
+    = f.hidden_field :created_by, value: current_user.id
+    - if @fuel_transaction.errors.any?
+      #error_explanation
+        %h2= "#{pluralize(@fuel_transaction.errors.count, "error")} prohibited this fuel_transaction from being saved:"
+        %ul
+          - @fuel_transaction.errors.full_messages.each do |msg|
+            %li= msg
 
-  - if @fuel_transaction.new_record?
-    - selected_tank='Not Defined'
-    - selected_vehicle='Not Defined'
-  - else
-    - selected_tank = @fuel_transaction.fuel_tank_id
-    - selected_vehicle = @fuel_transaction.vehicle_id
+    - if @fuel_transaction.new_record?
+      - selected_tank='Not Defined'
+      - selected_vehicle='Not Defined'
+    - else
+      - selected_tank = @fuel_transaction.fuel_tank_id
+      - selected_vehicle = @fuel_transaction.vehicle_id
 
-  .form-group
-    = f.label :document_code, class: 'col-sm-2 control-label'
-    .col-sm-3= f.text_field :document_code, class: 'form-control'
+    .form-group
+      = f.label :document_code, class: 'col-sm-2 control-label'
+      .col-sm-3= f.text_field :document_code, class: 'form-control'
 
-  .form-group
-    = f.label :amount, class: 'col-sm-2 control-label'
-    .col-sm-3
-      .input-group
-        = f.number_field :amount, :in => 0..99999, :step => 0.01, :class => 'form-control'
-        .input-group-btn= f.collection_select :fuel_unit_type_id, UnitType.order(:description), :id, :description, {selected: 1}, {class: 'selectpicker', 'data-width'=>"150px"}
+    .form-group
+      = f.label :amount, class: 'col-sm-2 control-label'
+      .col-sm-3
+        .input-group
+          = f.number_field :amount, :in => 0..99999, :step => 0.01, :class => 'form-control'
+          .input-group-btn= f.collection_select :fuel_unit_type_id, UnitType.order(:description), :id, :description, {selected: 1}, {class: 'selectpicker', 'data-width'=>"150px"}
 
-  .form-group
-    = f.label :fuel_type_id, class: 'col-sm-2 control-label'
-    .col-sm-3= f.collection_select :fuel_type_id, FuelType.main_use.order(:name), :id, :name, {:prompt => 'Not Defined'}, {:class => 'form-control'}
-    /{class: 'selectpicker', 'data-width'=>"auto"}
+    .form-group
+      = f.label :fuel_type_id, class: 'col-sm-2 control-label'
+      .col-sm-3= f.collection_select :fuel_type_id, FuelType.main_use.order(:name), :id, :name, {:prompt => 'Not Defined'}, {:class => 'form-control'}
+      /{class: 'selectpicker', 'data-width'=>"auto"}
 
-  .form-group
-    = f.label :is_vehicle, class: 'col-sm-2 control-label'
-    .col-md-1= f.check_box :is_vehicle, :id => 'check_vehicle'
-    .col-md-3 Tick if Vehicle, untick if Vessel
+    .form-group
+      = f.label :is_vehicle, class: 'col-sm-2 control-label'
+      .col-md-1= f.check_box :is_vehicle, :id => 'check_vehicle'
+      .col-md-3 Tick if Vehicle, untick if Vessel
 
-  .form-group#span_vehicle{style: "display:none;"}
-    = f.label :vehicle_id, class: 'col-sm-2 control-label'
-    .col-sm-3= select_tag("fuel_transaction[vehicle_id]", grouped_options_for_select(Vehicle.groupped, selected_vehicle), :class => 'form-control')
+    .form-group#span_vehicle{style: "display:none;"}
+      = f.label :vehicle_id, class: 'col-sm-2 control-label'
+      .col-sm-3= select_tag("fuel_transaction[vehicle_id]", grouped_options_for_select(Vehicle.groupped, selected_vehicle), :class => 'form-control')
     
-  .form-group#span_vessel{style: "display:block;"}
-    = f.label :vessel_id, class: 'col-sm-2 control-label'
-    .col-sm-3= f.collection_select :vessel_id, Vessel.all, :id, :vessel_details, {:include_blank => 'Select a vessel'}, {class: 'selectpicker', 'data-width'=>"360px"}
+    .form-group#span_vessel{style: "display:block;"}
+      = f.label :vessel_id, class: 'col-sm-2 control-label'
+      .col-sm-3= f.collection_select :vessel_id, Vessel.all, :id, :vessel_details, {:include_blank => 'Select a vessel'}, {class: 'selectpicker', 'data-width'=>"360px"}
 
-  .form-group
-    = f.label :fuel_tank_id, class: 'col-sm-2 control-label'
-    .col-sm-4= select_tag("fuel_transaction[fuel_tank_id]", grouped_options_for_select(FuelTank.groupped, selected_tank), :class => 'form-control')
+    .form-group
+      = f.label :fuel_tank_id, class: 'col-sm-2 control-label'
+      .col-sm-4= select_tag("fuel_transaction[fuel_tank_id]", grouped_options_for_select(FuelTank.groupped, selected_tank), :class => 'form-control')
 
   .col-sm-2.col-sm-offset-2
     = f.submit 'Save', class: "btn btn-primary"
