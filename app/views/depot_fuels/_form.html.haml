@@ -1,8 +1,8 @@
 .container{:style => "padding-left: 60px;"}
   = form_for @depot_fuel, :html => { :class => 'form-horizontal' }  do |f|
-    - cache @depot_fuel do
-      = render 'shared/error_messages', object: f.object
-          
+    = render 'shared/error_messages', object: f.object
+    
+    - cache "#{main_chkey(@depot_fuel)}#{chkeys([Unit])}" do
       .control-group
         = f.label :unit_id, :class => 'control-label'
         .controls= f.collection_select :unit_id, Unit.is_depot.order(name: :desc), :id, :name, :include_blank => t('helpers.prompt.select_depot'), :html_options => {:class => 'selectpicker'}

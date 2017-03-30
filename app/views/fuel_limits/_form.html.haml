@@ -1,41 +1,38 @@
 = form_for @fuel_limit, :html => { :class => 'form-horizontal' } do |f|
-  - if @fuel_limit.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@fuel_limit.errors.count, "error")} prohibited this fuel_limit from being saved:"
-      %ul
-        - @fuel_limit.errors.full_messages.each do |msg|
-          %li= msg
+  = render 'shared/error_messages', object: f.object
+  
+  - cache "#{main_chkey(@fuel_limit)}/#{chkey(Unit)}/#{chkey(FuelType)}/#{chkey(UnitType)}" do
+  
+    .form-group
+      = f.label :code, class: 'col-sm-2 control-label'
+      .col-sm-5= f.text_field :code, class: 'form-control', placeholder: "Limit Code"
 
-  .form-group
-    = f.label :code, class: 'col-sm-2 control-label'
-    .col-sm-5= f.text_field :code, class: 'form-control', placeholder: "Limit Code"
+    .form-group
+      = f.label :depot_id, class: 'col-sm-2 control-label'
+      .col-sm-10= f.collection_select :unit_id, Unit.is_depot.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_depot')}, {class: 'selectpicker', 'data-width'=>"auto"}
 
-  .form-group
-    = f.label :depot_id, class: 'col-sm-2 control-label'
-    .col-sm-10= f.collection_select :unit_id, Unit.is_depot.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_depot')}, {class: 'selectpicker', 'data-width'=>"auto"}
+    .form-group
+      = f.label :limit_amount, class: 'col-sm-2 control-label'
+      .col-sm-5
+        .input-group
+          = f.text_field :limit_amount, class: 'form-control', style: "text-align: right;"
+          = f.collection_select :limit_unit_type_id, UnitType.all, :id, :description, {:include_blank => t('helpers.prompt.select_unit_type')}, {:class => 'selectpicker', 'data-width'=>"auto"}
 
-  .form-group
-    = f.label :limit_amount, class: 'col-sm-2 control-label'
-    .col-sm-5
-      .input-group
-        = f.text_field :limit_amount, class: 'form-control', style: "text-align: right;"
-        = f.collection_select :limit_unit_type_id, UnitType.all, :id, :description, {:include_blank => t('helpers.prompt.select_unit_type')}, {:class => 'selectpicker', 'data-width'=>"auto"}
+    .form-group
+      = f.label :duration, class: 'col-sm-2 control-label'
+      .col-sm-2= f.text_field :duration, class: 'form-control', placeholder: "Duration (Days)"
 
-  .form-group
-    = f.label :duration, class: 'col-sm-2 control-label'
-    .col-sm-2= f.text_field :duration, class: 'form-control', placeholder: "Duration (Days)"
+    .form-group
+      = f.label :fuel_type_id, class: 'col-sm-2 control-label'
+      .col-sm-10= f.collection_select :fuel_type_id, FuelType.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_fuel_type')}, {class: 'selectpicker', 'data-width'=>"auto"}
 
-  .form-group
-    = f.label :fuel_type_id, class: 'col-sm-2 control-label'
-    .col-sm-10= f.collection_select :fuel_type_id, FuelType.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_fuel_type')}, {class: 'selectpicker', 'data-width'=>"auto"}
+    .form-group
+      = f.label :fuel_unit_type_id, class: 'col-sm-2 control-label'
+      .col-sm-10= f.collection_select :fuel_unit_type_id, UnitType.all, :id, :description, {:include_blank => t('helpers.prompt.select_unit_type')}, {:class => 'selectpicker', 'data-width'=>"auto"}
 
-  .form-group
-    = f.label :fuel_unit_type_id, class: 'col-sm-2 control-label'
-    .col-sm-10= f.collection_select :fuel_unit_type_id, UnitType.all, :id, :description, {:include_blank => t('helpers.prompt.select_unit_type')}, {:class => 'selectpicker', 'data-width'=>"auto"}
-
-  .form-group
-    = f.label :emails, class: 'col-sm-2 control-label'
-    .col-sm-5= f.text_field :emails, class: 'form-control', placeholder: "Emails"
+    .form-group
+      = f.label :emails, class: 'col-sm-2 control-label'
+      .col-sm-5= f.text_field :emails, class: 'form-control', placeholder: "Emails"
 
   /.col-sm-offset-2.actions
   .col-sm-offset-2

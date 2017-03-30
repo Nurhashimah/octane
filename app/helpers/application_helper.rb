@@ -53,4 +53,19 @@ module ApplicationHelper
     current_user.roles[:user_roles][:administration] 
   end
   
+  #use in partial form - for auto-expiry cache_key
+  def main_chkey(m)
+    "#{m.class.name.downcase}-#{m.id}-#{m.class.maximum(:updated_at).to_i}"
+  end
+  
+  def chkey(m)
+    "#{m.name.downcase}-#{m.maximum(:updated_at).to_i}_#{m.count}"
+  end
+  
+  def chkeys(y)
+    x=""
+    y.each{|t| x+="/"+chkey(t)}
+    x
+  end
+  
 end

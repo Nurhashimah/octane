@@ -1,18 +1,16 @@
 = form_for @fuel_transaction, :html => { :class => 'form-horizontal' } do |f|
-  - cache "fuel_transaction/#{@fuel_transaction.id}-resupply" do
+  = render 'shared/error_messages', object: f.object
+  
+  - cache "#{main_chkey(@fuel_transaction)}#{chkeys([FuelTank, UnitType])}" do
+  
     = f.hidden_field :transaction_type, value: @fuel_transaction.transaction_type
     = f.hidden_field :created_by, value: current_user.id
-    - if @fuel_transaction.errors.any?
-      #error_explanation
-        %h2= "#{pluralize(@fuel_transaction.errors.count, "error")} prohibited this fuel_transaction from being saved:"
-        %ul
-          - @fuel_transaction.errors.full_messages.each do |msg|
-            %li= msg
 
     - if @fuel_transaction.new_record?
       - selected_tank='Not Defined'
     - else
       - selected_tank = @fuel_transaction.fuel_tank_id
+
     .form-group
       = f.label :fuel_tank_id, class: 'col-sm-2 control-label'
       .col-sm-4= select_tag("fuel_transaction[fuel_tank_id]", grouped_options_for_select(FuelTank.groupped, selected_tank), :class => 'form-control')

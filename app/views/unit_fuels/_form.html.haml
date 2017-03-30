@@ -1,7 +1,8 @@
 .container{:style => "padding-left: 60px;"}
   = form_for @unit_fuel, :html => { :class => 'form-horizontal' }  do |f|
+    = render 'shared/error_messages', object: f.object
+
     - cache @unit_fuel do
-      = render 'shared/error_messages', object: f.object
       
       .control-group
         = f.label :unit_id, :class => 'control-label'

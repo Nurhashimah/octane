@@ -21,7 +21,15 @@ class Unit < ActiveRecord::Base
   validates_presence_of :shortname, :name, :code
   validates_uniqueness_of :shortname
 
-  scope :is_depot, -> { where("id IN(?)",FuelTank.pluck(:unit_id).uniq) }
+  scope :is_depot,                      -> { where("id IN(?)",FuelTank.pluck(:unit_id).uniq) }
+  scope :is_vessel,                      -> { where('name ILIKE(?) or name LIKE(?)', '%kapal diraja%', 'KD%') }
+  scope :non_depot,                    -> { where.not(id: is_depot.pluck(:id)) }
+  scope :external_roots,             -> { where('ancestry_depth=? AND name NOT ILIKE(?)', 0, '%Tentera Laut') }
+  scope :external_descendants, -> { a=[];external_roots.each{|x|a+=x.descendants};a; where(id: a) }
+  scope :external_parties,          -> { where(id: external_roots.pluck(:id)+external_descendants.pluck(:id)) }
+  scope :hv_budget,                   -> { where.not('id IN(?) OR name ILIKE(?)', external_parties.pluck(:id), '%kapal-kapal di%') }
+  
+  #scope :external_roots,             -> { where('name LIKE (?) OR name LIKE (?)','Tentera Darat', 'Tentera Udara DiRaja Malaysia' ) }
   
   def set_combo_code
     if ancestry_depth == 0
@@ -43,6 +51,10 @@ class Unit < ActiveRecord::Base
     else
       "jabatan"
     end
+  end
+  
+  def self.vessel_tobe_list(exc_unitid)
+    is_vessel.where.not(id: Vessel.other_unit_ids(exc_unitid))
   end
   
   def self.status_list

@@ -10,4 +10,9 @@ class Vessel < ActiveRecord::Base
   def vessel_details
     pennent_no+" | "+unit.name
   end
+  
+  def self.other_unit_ids(x)
+    where.not(unit_id: x).pluck(:unit_id)
+  end
+  
 end

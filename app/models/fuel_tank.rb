@@ -8,6 +8,12 @@ class FuelTank < ActiveRecord::Base
   
   validates_presence_of :unit_id, :locations, :capacity, :unit_type,:fuel_type_id
   
+  scope :in_use, -> { where("capacity > ?", 0) }
+  
+  def self.of_depot(unitid)
+    in_use.where(unit_id: unitid)
+  end
+  
   def set_default_maximum
     self.maximum=capacity*0.95
   end
@@ -19,7 +25,6 @@ class FuelTank < ActiveRecord::Base
   def fuel_tank_details
     "#{unit.name}"+" | "+fuel_tank_type
   end
-  
 	
   def self.get_tank(tank_name, depot_id, fuel_type_id)#, capacity)
     tankno = tank_name.split(" ")[tank_name.split(" ").count-1]

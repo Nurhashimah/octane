@@ -3,8 +3,8 @@ class VesselTypesController < ApplicationController
   
   # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
   caches_action :index, :cache_path => proc {|c|
-      timestamp = VesselType.order(updated_at: :desc).limit(1).first.updated_at.to_i
-      string = timestamp.to_s + c.params.inspect
+      timestamp = VesselType.maximum(:updated_at).to_i
+      string = timestamp.to_s + c.params.inspect+"_#{VesselType.count}"
       {:tag => Digest::SHA1.hexdigest(string)}
   }
 

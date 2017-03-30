@@ -11,11 +11,13 @@ class FuelType < ActiveRecord::Base
   has_many :fuel_issueds
   has_many :fuel_supplieds
 
-  scope :main_use, -> { where(id: [FuelTank.where('fuel_type_id is not null').pluck(:fuel_type_id).uniq].flatten)} #for use in Add Fuel & Use Fuel
+  scope :main_use, -> { where(id: [FuelTank.where('fuel_type_id is not null').pluck(:fuel_type_id).uniq].flatten) }  #for use in Add Fuel & Use Fuel
+  scope :exclude_petrol_diesel, -> { where.not('shortname LIKE(?) or shortname LIKE(?)', 'PETROL', 'DIESEL') }     #add_fuels/_form
+  scope :include_petrol_diesel, -> { where(name:['PETROL', 'DIESEL']) }                                                                 #external_issueds, external_supplieds/_form
 
-  def self.exclude_petrol_diesel
-    where('name LIKE (?) OR name LIKE (?)','PETROL','DIESEL').pluck(:id)
-  end
+#   def self.exclude_petrol_diesel
+#     where('name LIKE (?) OR name LIKE (?)','PETROL','DIESEL').pluck(:id)
+#   end
 
   def self.get_fuel_type(fueltype)
     where('shortname ILIKE (?)', fueltype)[0].id

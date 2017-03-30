@@ -1,24 +1,16 @@
 = form_for @vessel, :html => { :class => 'form-horizontal' } do |f|
-  - if @vessel.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@vessel.errors.count, "error")} prohibited this vessel from being saved:"
-      %ul
-        - @vessel.errors.full_messages.each do |msg|
-          %li= msg
+  = render 'shared/error_messages', object: f.object
 
   %h5 *Selecting a Unit shall indicates current Vessel is a UNIT of a selected unit name
-  - vessel_units=Vessel.pluck(:unit_id)
-  - if @vessel.new_record?
-    - if vessel_units ==[]
-      - @units_for = Unit.where('name ILIKE(?) or name LIKE(?)', '%kapal diraja%', 'KD%')
-    - else
-      - @units_for = Unit.where('(name ILIKE(?) or name LIKE(?)) and id NOT IN(?)', '%kapal diraja%', 'KD%', vessel_units)
-  - else
-    - @units_for = Unit.where('name ILIKE(?) or name LIKE(?)', '%kapal diraja%', 'KD%')
-  
+
+  /- cache "#{main_chkey(@vessel)}#{chkeys([Unit, Vessel, VesselCategory])}" do   #w/o cache: 20-34ms, w cache: 19-33ms
+
   .form-group
     = f.label :unit_id, class: 'col-sm-2 control-label'
-    .col-sm-10= f.collection_select :unit_id, @units_for, :id, :name, {:include_blank => t('helpers.prompt.select_vessel')}, {class: 'selectpicker', 'data-width'=>"auto"}
+    /- units_for= Unit.is_vessel.where.not(id: Vessel.where.not(unit_id: @vessel.unit_id).pluck(:unit_id))
+    /- units_for= Unit.is_vessel.where.not(id: Vessel.others_unit(@vessel.unit_id))
+    /- units_for= Unit.vessel_tobe_list(@vessel.unit_id)
+    .col-sm-10= f.collection_select :unit_id, Unit.vessel_tobe_list(@vessel.unit_id), :id, :name, {:include_blank => t('helpers.prompt.select_vessel')}, {class: 'selectpicker', 'data-width'=>"auto"}
 
   .form-group
     = f.label :pennent_no, class: 'col-sm-2 control-label'

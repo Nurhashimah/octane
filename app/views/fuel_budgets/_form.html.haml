@@ -1,38 +1,37 @@
 = form_for @fuel_budget, :html => { :class => 'form-horizontal' } do |f|
-  - if @fuel_budget.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@fuel_budget.errors.count, "error")} prohibited this fuel_budget from being saved:"
-      %ul
-        - @fuel_budget.errors.full_messages.each do |msg|
-          %li= msg
+  = render 'shared/error_messages', object: f.object
 
-  .form-group
-    = f.label :unit_id, class: 'col-sm-2 control-label'
-    .col-sm-10= f.collection_select :unit_id, Unit.where('name not ILIKE(?)', '%kapal-kapal di%').where('name not ILIKE(?)', '%tentera darat%').where('name not ILIKE(?)', '%tentera udara%').order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_unit')}, {class: 'selectpicker', 'data-width'=>"auto"}
+  /- cache "fuel_budget-#{@fuel_budget.id}/unit-#{Unit.maximum(:updated_at).to_i}_#{Unit.count}/fueltype-#{FuelType.maximum(:updated_at).to_i}_#{FuelType.count}/unittype-#{UnitType.maximum(:updated_at).to_i}_#{UnitType.count}" do
 
-  .form-group
-    = f.label :code, class: 'col-sm-2 control-label'
-    .col-sm-5= f.text_field :code, class: 'form-control', placeholder: "Budget Code"
+  - cache "#{main_chkey(@fuel_budget)}#{chkeys([Unit, FuelType, UnitType])}" do
 
-  //.field
-  //  = f.label :parent_id
-  //  = f.number_field :parent_id
+    .form-group
+      = f.label :unit_id, class: 'col-sm-2 control-label'
+      .col-sm-10= f.collection_select :unit_id, Unit.hv_budget.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_unit')}, {class: 'selectpicker', 'data-width'=>"auto"}
 
-  .form-group
-    = f.label :year_starts_on, class: 'col-sm-2 control-label'
-    .col-sm-5= f.datetime_select :year_starts_on,{}, {class: 'selectpicker', 'data-width'=>"auto"}
+    .form-group
+      = f.label :code, class: 'col-sm-2 control-label'
+      .col-sm-5= f.text_field :code, class: 'form-control', placeholder: "Budget Code"
 
-  .form-group
-    = f.label :fuel_type_id, class: 'col-sm-2 control-label'
-    .col-sm-10= f.collection_select :fuel_type_id, FuelType.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_fuel_type')}, {class: 'selectpicker', 'data-width'=>"auto"}
+    //.field
+    //  = f.label :parent_id
+    //  = f.number_field :parent_id
+
+    .form-group
+      = f.label :year_starts_on, class: 'col-sm-2 control-label'
+      .col-sm-5= f.datetime_select :year_starts_on,{}, {class: 'selectpicker', 'data-width'=>"auto"}
+
+    .form-group
+      = f.label :fuel_type_id, class: 'col-sm-2 control-label'
+      .col-sm-10= f.collection_select :fuel_type_id, FuelType.order(:name), :id, :name, {:include_blank => t('helpers.prompt.select_fuel_type')}, {class: 'selectpicker', 'data-width'=>"auto"}
 
 
-  .form-group
-    = f.label :amount, class: 'col-sm-2 control-label'
-    .col-sm-5
-      .input-group
-        = f.text_field :amount, class: 'form-control', style: "text-align: right;"
-        = f.collection_select :unit_type_id, UnitType.all, :id, :description, {:include_blank => t('helpers.prompt.select_unit_type')}, {:class => 'selectpicker', 'data-width'=>"auto"}
+    .form-group
+      = f.label :amount, class: 'col-sm-2 control-label'
+      .col-sm-5
+        .input-group
+          = f.text_field :amount, class: 'form-control', style: "text-align: right;"
+          = f.collection_select :unit_type_id, UnitType.all, :id, :description, {:include_blank => t('helpers.prompt.select_unit_type')}, {:class => 'selectpicker', 'data-width'=>"auto"}
 
   /.col-sm-offset-2.actions
   /  = f.submit 'Save', class: 'btn btn-primary'

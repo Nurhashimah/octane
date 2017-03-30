@@ -7,13 +7,13 @@ class FuelLimitsController < ApplicationController
   # caches_action :index, :show    #step 1 : https://www.sitepoint.com/caching-cache-digest/
   # use below (replacing step 1, 2a, 2b & 2c) - for auto expiry caches & ransack search to works - http://hawkins.io/2011/05/advanced_caching_in_rails/
   caches_action :index, :cache_path => proc {|c|
-      timestamp = FuelLimit.order(updated_at: :desc).limit(1).first.updated_at.to_i
-      string = timestamp.to_s + c.params.inspect
+      timestamp = FuelLimit.maximum(:updated_at).to_i
+      string = timestamp.to_s + c.params.inspect+"_#{FuelLimit.count}"
       {:tag => Digest::SHA1.hexdigest(string)}
   }
   # use below (replacing step 1 & 2bii)
   caches_action :show, :cache_path => proc {|c|
-      timestamp = FuelLimit.order(updated_at: :desc).limit(1).first.updated_at.to_i
+      timestamp = FuelLimit.maximum(:updated_at).to_i
       string = timestamp.to_s + c.params.inspect
       {:tag => Digest::SHA1.hexdigest(string)}
   }
