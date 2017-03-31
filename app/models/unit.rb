@@ -46,7 +46,7 @@ class Unit < ActiveRecord::Base
   end
   
   def unit_status
-    if Unit.is_depot.include?(id)
+    if Unit.is_depot.pluck(:id).include?(id)
       "depoh"
     else
       "jabatan"

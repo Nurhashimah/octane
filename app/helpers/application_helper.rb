@@ -54,6 +54,10 @@ module ApplicationHelper
   end
   
   #use in partial form - for auto-expiry cache_key
+  def new_chkey(m, object_id)
+    "#{m.class.name.downcase}-#{object_id}-#{m.class.maximum(:updated_at).to_i}"
+  end
+  
   def main_chkey(m)
     "#{m.class.name.downcase}-#{m.id}-#{m.class.maximum(:updated_at).to_i}"
   end

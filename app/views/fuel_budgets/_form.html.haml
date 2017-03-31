@@ -1,9 +1,8 @@
 = form_for @fuel_budget, :html => { :class => 'form-horizontal' } do |f|
   = render 'shared/error_messages', object: f.object
-
-  /- cache "fuel_budget-#{@fuel_budget.id}/unit-#{Unit.maximum(:updated_at).to_i}_#{Unit.count}/fueltype-#{FuelType.maximum(:updated_at).to_i}_#{FuelType.count}/unittype-#{UnitType.maximum(:updated_at).to_i}_#{UnitType.count}" do
-
-  - cache "#{main_chkey(@fuel_budget)}#{chkeys([Unit, FuelType, UnitType])}" do
+    
+  - mkey= @fuel_budget.new_record? ? new_chkey(@fuel_budget, f.object_id) : main_chkey(@fuel_budget)
+  - cache "#{mkey}#{chkeys([Unit, FuelType, UnitType])}" do
 
     .form-group
       = f.label :unit_id, class: 'col-sm-2 control-label'

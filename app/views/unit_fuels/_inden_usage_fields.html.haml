@@ -1,6 +1,7 @@
 %fieldset
   .form-inline{role: "form"}
-    - cache "unit_fuel-#{@unit_fuel.id}/inden_usage-#{f.object.id}" do 
+    /- cache "unit_fuel-#{@unit_fuel.id}/inden_usage-#{f.object_id}" do 
+    - cache "#{@mkey}/inden_usage-#{f.object_id}" do
       = f.collection_select :inden_card_id, IndenCard.all.order(:serial_no), :id, :details, :include_blank => (t 'helpers.prompt.select_inden_card'), :html_options => {:class => 'selectpicker'}
       = f.text_field :petrol_ltr, :class => 'text_field input-medium', :placeholder => 'Petrol in Ltr'
       = f.text_field :diesel_ltr, :class => 'text_field input-small', :placeholder => 'Diesel in Ltr'

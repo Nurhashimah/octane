@@ -5,7 +5,9 @@ class UnitsController < ApplicationController
   caches_action :index, :cache_path => proc {|c|
       timestamp = Unit.maximum(:updated_at).to_i
       total_recs = Unit.count  #TO CATER - when record is destroyed
-      string = timestamp.to_s + c.params.inspect+"_#{total_recs}"
+      timestamp2 = FuelTank.maximum(:updated_at).to_i
+      total_recs2 = FuelTank.count
+      string = timestamp.to_s + c.params.inspect+"_#{total_recs}/tank-#{timestamp2}_#{total_recs2}"
       {:tag => Digest::SHA1.hexdigest(string)}
   }
   caches_action :show, :cache_path => proc {|c|
