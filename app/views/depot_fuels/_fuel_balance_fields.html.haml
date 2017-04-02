@@ -1,8 +1,6 @@
 %fieldset
   .form-inline{role: "form"}
-    /- cache "depot_fuel-#{@depot_fuel.id}/fuel_balance-#{f.object.id}" do 
-    /NOTE - fuel tank -- rely on Unit (name)
-    - cache "#{main_chkey(@depot_fuel)}/fuel_balance-#{f.object.id}#{chkeys([Unit, FuelTank, UnitType])}" do
+    - cache "#{@mkey}/fuel_balance-#{f.object_id}" do
       = f.collection_select :fuel_tank_id, FuelTank.in_use.order(:id), :id, :fuel_tank_details, :include_blank => (t 'helpers.prompt.select_fuel_tank'), :html_options => {:class => 'selectpicker'}
       = f.text_field :current, :class => 'text_field input-small', :placeholder => 'Quantity'
       = f.collection_select :unit_type_id, UnitType.all, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}

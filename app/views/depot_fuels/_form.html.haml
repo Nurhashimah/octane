@@ -2,7 +2,12 @@
   = form_for @depot_fuel, :html => { :class => 'form-horizontal' }  do |f|
     = render 'shared/error_messages', object: f.object
     
-    - cache "#{main_chkey(@depot_fuel)}#{chkeys([Unit])}" do
+    /NOTE - f.object_id is used to cater ALL data(inc not yet saved (i)repeating fields data+(ii)latest UnitType & FuelType list) in errorneous form
+    - @mkey= @depot_fuel.new_record? ? new_chkey(@depot_fuel, f.object_id) : main_chkey(@depot_fuel)+"_#{f.object_id}"
+    - ckeys=chkeys([Unit, FuelTank])
+    - cache "#{@mkey}#{ckeys}" do
+    
+      /- cache "#{main_chkey(@depot_fuel)}#{chkeys([Unit])}" do
       .control-group
         = f.label :unit_id, :class => 'control-label'
         .controls= f.collection_select :unit_id, Unit.is_depot.order(name: :desc), :id, :name, :include_blank => t('helpers.prompt.select_depot'), :html_options => {:class => 'selectpicker'}
