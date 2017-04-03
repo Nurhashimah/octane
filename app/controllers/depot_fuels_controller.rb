@@ -1,5 +1,6 @@
 class DepotFuelsController < ApplicationController
   before_filter :set_depot_fuel, :only => [:show, :edit, :update, :destroy]
+  before_filter :set_listing, :only => [:new, :create, :edit, :update]
   filter_access_to :index, :create, :import_excel, :attribute_check => false
   filter_access_to :show, :edit, :update, :destroy, :attribute_check => true
   
@@ -156,10 +157,17 @@ class DepotFuelsController < ApplicationController
   def download_excel_format
     send_file ("#{::Rails.root.to_s}/public/excel_format/DepotFuel_Excel.xls")
   end 
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_depot_fuel
       @depot_fuel = DepotFuel.find(params[:id])
+    end
+    
+    def set_listing
+      @fuel_types=FuelType.all                                                                                     #fuel_issueds, fuel_supplieds
+      @unit_types=UnitType.all                                                                                     #fuel_balances, fuel_issueds, fuel_supplieds
+      @tanks=FuelTank.in_use.includes(:unit).includes(:fuel_type).order(:id)               #fuel_balances
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -3,62 +3,62 @@
     = render 'shared/error_messages', object: f.object
     
     /NOTE - f.object_id is used to cater ALL data(inc not yet saved (i)repeating fields data+(ii)latest UnitType & FuelType list) in errorneous form
-    - @mkey= @depot_fuel.new_record? ? new_chkey(@depot_fuel, f.object_id) : main_chkey(@depot_fuel)+"_#{f.object_id}"
-    - ckeys=chkeys([Unit, FuelTank])
-    - cache "#{@mkey}#{ckeys}" do
+    - @mkey= @depot_fuel.new_record? ? new_chkey(@depot_fuel, f.object_id) : main_chkey(@depot_fuel)
+    /+"_#{f.object_id}"
+    /- ckeys=chkeys([Unit, FuelTank])
+    /- cache "#{@mkey}#{ckeys}" do
     
-      /- cache "#{main_chkey(@depot_fuel)}#{chkeys([Unit])}" do
-      .control-group
-        = f.label :unit_id, :class => 'control-label'
-        .controls= f.collection_select :unit_id, Unit.is_depot.order(name: :desc), :id, :name, :include_blank => t('helpers.prompt.select_depot'), :html_options => {:class => 'selectpicker'}
+    .control-group
+      = f.label :unit_id, :class => 'control-label'
+      .controls= f.collection_select :unit_id, Unit.is_depot.order(name: :desc), :id, :name, :include_blank => t('helpers.prompt.select_depot'), :html_options => {:class => 'selectpicker'}
     
-      .control-group
-        = f.label :issue_date, :class => 'control-label'
-        .controls= f.text_field :issue_date, :class => 'text_field', :type => :text, 'data-behaviour' => 'datepicker_before'
+    .control-group
+      = f.label :issue_date, :class => 'control-label'
+      .controls= f.text_field :issue_date, :class => 'text_field', :type => :text, 'data-behaviour' => 'datepicker_before'
 
-      %br
+    %br
  
-      %ul.nav.nav-tabs
-        %li.active= link_to t('fuel_supplieds.title2'),        '#tab1', data: {toggle: 'tab'}
-        %li= link_to t('fuel_issueds.title2'),  '#tab2', data: {toggle: 'tab'}
-        %li= link_to t('fuel_balances.title2'),  '#tab3', data: {toggle: 'tab'}
+    %ul.nav.nav-tabs
+      %li.active= link_to t('fuel_supplieds.title2'),        '#tab1', data: {toggle: 'tab'}
+      %li= link_to t('fuel_issueds.title2'),  '#tab2', data: {toggle: 'tab'}
+      %li= link_to t('fuel_balances.title2'),  '#tab3', data: {toggle: 'tab'}
  
-      #myTabContent.tab-content	
-        #tab1.tab-pane.active
-          .row
-            .span8
-              %font{:size => "-1"}
-                =t 'helpers.prompt.supplied'
-          .form-group
-            .col-lg-offset-2.col-lg-10
-              = f.fields_for :fuel_supplieds do |builder|
-                = render 'fuel_supplied_fields', f: builder
-              .row
-                = link_to_add_fields t('actions.addmore'), f, :fuel_supplieds, "",  t('actions.addmore')
+    #myTabContent.tab-content	
+      #tab1.tab-pane.active
+        .row
+          .span8
+            %font{:size => "-1"}
+              =t 'helpers.prompt.supplied'
+        .form-group
+          .col-lg-offset-2.col-lg-10
+            = f.fields_for :fuel_supplieds do |builder|
+              = render 'fuel_supplied_fields', f: builder
+            .row
+              = link_to_add_fields t('actions.addmore'), f, :fuel_supplieds, "",  t('actions.addmore')
       
-        #tab2.tab-pane
-          .row
-            .span8
-              %font{:size => "-1"}
-                =t 'helpers.prompt.issued'
-          .form-group
-            .col-lg-offset-2.col-lg-10
-              = f.fields_for :fuel_issueds do |builder|
-                = render 'fuel_issued_fields', f: builder
-              .row
-                = link_to_add_fields t('actions.addmore'), f, :fuel_issueds, "",  t('actions.addmore')
+      #tab2.tab-pane
+        .row
+          .span8
+            %font{:size => "-1"}
+              =t 'helpers.prompt.issued'
+        .form-group
+          .col-lg-offset-2.col-lg-10
+            = f.fields_for :fuel_issueds do |builder|
+              = render 'fuel_issued_fields', f: builder
+            .row
+              = link_to_add_fields t('actions.addmore'), f, :fuel_issueds, "",  t('actions.addmore')
 
-        #tab3.tab-pane
-          .row
-            .span8
-              %font{:size => "-1"}
-                =t 'helpers.prompt.balance'
-          .form-group
-            .col-lg-offset-2.col-lg-10
-              = f.fields_for :fuel_balances do |builder|
-                = render 'fuel_balance_fields', f: builder
-              .row
-                = link_to_add_fields t('actions.addmore'), f, :fuel_balances, "",  t('actions.addmore')
+      #tab3.tab-pane
+        .row
+          .span8
+            %font{:size => "-1"}
+              =t 'helpers.prompt.balance'
+        .form-group
+          .col-lg-offset-2.col-lg-10
+            = f.fields_for :fuel_balances do |builder|
+              = render 'fuel_balance_fields', f: builder
+            .row
+              = link_to_add_fields t('actions.addmore'), f, :fuel_balances, "",  t('actions.addmore')
 
     .form-actions
       = f.submit (t 'helpers.links.submit'), :class => 'btn btn-primary'

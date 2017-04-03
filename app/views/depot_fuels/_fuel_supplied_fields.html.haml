@@ -1,9 +1,10 @@
 %fieldset
   .form-inline{role: "form"}
-    - cache "#{@mkey}/fuel_supplied-#{f.object_id}" do
-      = f.collection_select :fuel_type_id, FuelType.all, :id, :name, :include_blank => (t 'helpers.prompt.select_fuel_type'), :html_options => {:class => 'selectpicker'}
+    - fbkey=f.object.id.nil? ? f.object_id : f.object.id
+    - cache "#{@mkey}/fuel_supplied-#{fbkey}" do
+      = f.collection_select :fuel_type_id, @fuel_types, :id, :name, :include_blank => (t 'helpers.prompt.select_fuel_type'), :html_options => {:class => 'selectpicker'}
       = f.text_field :quantity, :class => 'text_field input-small', :placeholder => 'Quantity'
-      = f.collection_select :unit_type_id, UnitType.all, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
+      = f.collection_select :unit_type_id, @unit_types, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
       = f.hidden_field :_destroy
       /= link_to_remove_fields (fa_icon "trash-o"), f     
 

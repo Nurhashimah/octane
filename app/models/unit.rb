@@ -45,21 +45,13 @@ class Unit < ActiveRecord::Base
     "#{shortname} " + "#{name}"
   end
   
-  def unit_status
-    if Unit.is_depot.pluck(:id).include?(id)
-      "depoh"
-    else
-      "jabatan"
-    end
-  end
-  
   def self.vessel_tobe_list(exc_unitid)
     is_vessel.where.not(id: Vessel.other_unit_ids(exc_unitid))
   end
   
   def self.status_list
     arr=[[ I18n.t('helpers.prompt.select_unit'),"", {'data'=>""}]]
-    Unit.all.order(:name).each{|u| arr << [u.name, u.id, {'data' => u.unit_status}]}
+    Unit.includes(:fuel_tanks).order(name: :asc).each{|u|aa=u.nil? ? "jabatan" : "depoh"; arr << [u.name, u.id, {'data' => aa}]}
     arr
   end
 
