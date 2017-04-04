@@ -29,8 +29,6 @@ class Unit < ActiveRecord::Base
   scope :external_parties,          -> { where(id: external_roots.pluck(:id)+external_descendants.pluck(:id)) }
   scope :hv_budget,                   -> { where.not('id IN(?) OR name ILIKE(?)', external_parties.pluck(:id), '%kapal-kapal di%') }
   
-  #scope :external_roots,             -> { where('name LIKE (?) OR name LIKE (?)','Tentera Darat', 'Tentera Udara DiRaja Malaysia' ) }
-  
   def set_combo_code
     if ancestry_depth == 0
       self.combo_code = code
@@ -42,7 +40,7 @@ class Unit < ActiveRecord::Base
   end
 
   def unit_details
-    "#{shortname} " + "#{name}"
+    "#{shortname} #{name}"
   end
   
   def self.vessel_tobe_list(exc_unitid)
@@ -51,7 +49,7 @@ class Unit < ActiveRecord::Base
   
   def self.status_list
     arr=[[ I18n.t('helpers.prompt.select_unit'),"", {'data'=>""}]]
-    Unit.includes(:fuel_tanks).order(name: :asc).each{|u|aa=u.nil? ? "jabatan" : "depoh"; arr << [u.name, u.id, {'data' => aa}]}
+    Unit.includes(:fuel_tanks).order(name: :asc).pluck(:name, :id, :unit_id).uniq.each{|u|aa=u.third.nil? ? "jabatan" : "depoh"; arr << [u.first, u.second, {'data' => aa}]}
     arr
   end
 

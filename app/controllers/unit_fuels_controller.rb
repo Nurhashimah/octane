@@ -1,11 +1,13 @@
+include ApplicationHelper
 class UnitFuelsController < ApplicationController
+  before_filter :set_listing, :only => [:new, :create, :edit, :update]
   filter_access_to :all, :except => [:fuel_type_usage_category, :unit_fuel_usage, :unit_fuel_list_usage, :annual_usage_report]
   before_action :set_unit_fuel, only: [:show, :edit, :update, :destroy]
   
   # NOTE use of auto expiry cache+works with ransack search - http://hawkins.io/2011/05/advanced_caching_in_rails/
   caches_action :index, :cache_path => proc {|c|
       timestamp = UnitFuel.maximum(:updated_at).to_i
-      string = timestamp.to_s + c.params.inspect+"_#{UnitFuel.count}"
+      string = timestamp.to_s + c.params.inspect+"_#{UnitFuel.count}"+chkeys([Unit, FuelTank])
       {:tag => Digest::SHA1.hexdigest(string)}
   }
 
@@ -209,6 +211,14 @@ class UnitFuelsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_unit_fuel
       @unit_fuel = UnitFuel.find(params[:id])
+    end
+    
+    def set_listing
+      @petrol_diesel=FuelType.include_petrol_diesel.order(:name)
+      @other_oils=FuelType.exclude_petrol_diesel.order(:name)
+      @unit_types=UnitType.order(:description)
+      @external_roots=Unit.external_roots
+      @inden_cards=IndenCard.order(:serial_no)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
