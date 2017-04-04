@@ -1,8 +1,6 @@
 .container{:style => "padding-left: 60px;"}
   = form_for @unit_fuel, :html => { :class => 'form-horizontal' }  do |f|
     = render 'shared/error_messages', object: f.object
-    
-    - @mkey= @unit_fuel.new_record? ? new_chkey(@unit_fuel, f.object_id) : main_chkey(@unit_fuel)+"_#{f.object_id}"
         
     .control-group
       = f.label :unit_id, :class => 'control-label'
