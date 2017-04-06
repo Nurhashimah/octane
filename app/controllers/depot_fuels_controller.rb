@@ -167,7 +167,6 @@ class DepotFuelsController < ApplicationController
     def set_listing
       @fuel_types=FuelType.all                                                                                     #fuel_issueds, fuel_supplieds
       @unit_types=UnitType.all                                                                                     #fuel_balances, fuel_issueds, fuel_supplieds
-      @tanks=FuelTank.in_use.includes(:unit).includes(:fuel_type).order(:id)               #fuel_balances
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

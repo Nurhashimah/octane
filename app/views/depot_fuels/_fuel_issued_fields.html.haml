@@ -1,10 +1,18 @@
 %fieldset
   .form-inline{role: "form"}
-    - fbkey=f.object.id.nil? ? f.object_id : f.object.id
-    - cache "#{@mkey}/fuel_issued-#{fbkey}" do
-      = f.collection_select :fuel_type_id, @fuel_types, :id, :name, :include_blank => (t 'helpers.prompt.select_fuel_type'), :html_options => {:class => 'selectpicker'}
-      = f.text_field :quantity, :class => 'text_field input-small', :placeholder => 'Quantity'
-      = f.collection_select :unit_type_id, @unit_types, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
-      = f.collection_select :unit_id,  Unit.non_depot.order(:name), :id, :name, :include_blank => (t 'helpers.prompt.select_unit'), :html_options => {:class => 'selectpicker'}
-      = f.hidden_field :_destroy
-      /= link_to_remove_fields (fa_icon "trash-o"), f     
+    = f.hidden_field :_destroy
+    = f.collection_select :fuel_type_id, @fuel_types, :id, :name, :include_blank => (t 'helpers.prompt.select_fuel_type'), :html_options => {:class => 'selectpicker'}
+    = f.text_field :quantity, :class => 'text_field input-small', :placeholder => 'Quantity'
+    = f.collection_select :unit_type_id, @unit_types, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
+    = f.collection_select :unit_id,  Unit.non_depot.order(:name), :id, :name, :include_blank => (t 'helpers.prompt.select_unit'), :html_options => {:class => 'selectpicker'}
+    = link_to content_tag(:i, "", class: "fa fa-trash-o"), "#", class: "removing_fields"
+
+:javascript
+  $('.removing_fields').click(function(){
+    var fieldset=$(this).parent().parent();
+    var form=$(this).parent();
+    var all_fields=form.children();
+    var destroyer=all_fields[0];
+    destroyer.value=true;    
+    fieldset.hide();
+  });

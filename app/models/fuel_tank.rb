@@ -25,6 +25,10 @@ class FuelTank < ActiveRecord::Base
   def fuel_tank_details
     "#{unit.name}"+" | "+fuel_tank_type
   end
+  
+  def ddd
+    [fuel_tank_details, id]
+  end
 	
   def self.get_tank(tank_name, depot_id, fuel_type_id)#, capacity)
     tankno = tank_name.split(" ")[tank_name.split(" ").count-1]
@@ -57,6 +61,17 @@ class FuelTank < ActiveRecord::Base
     end
     groupped_tank << ['Not Defined', all_tanks]
     groupped_tank
+  end
+  
+  #for use in select w OPTGROUP - in New/Edit depot_fuel -> select/upon selection of depot fuel -- fuel tank list is shortlisted according to selected depot.
+  def self.by_depot
+    arr=[]
+    FuelTank.in_use.includes(:unit).includes(:fuel_type).order(:id).group_by(&:unit).each do |unit, x|
+      y=[[(I18n.t 'helpers.prompt.select_fuel_tank')]]
+      x.each{ |xx| y << [xx.fuel_tank_details, xx.id]}
+      arr << [unit.name, y]
+    end
+    arr
   end
   
 end

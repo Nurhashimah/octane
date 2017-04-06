@@ -2,12 +2,6 @@
   = form_for @depot_fuel, :html => { :class => 'form-horizontal' }  do |f|
     = render 'shared/error_messages', object: f.object
     
-    /NOTE - f.object_id is used to cater ALL data(inc not yet saved (i)repeating fields data+(ii)latest UnitType & FuelType list) in errorneous form
-    - @mkey= @depot_fuel.new_record? ? new_chkey(@depot_fuel, f.object_id) : main_chkey(@depot_fuel)
-    /+"_#{f.object_id}"
-    /- ckeys=chkeys([Unit, FuelTank])
-    /- cache "#{@mkey}#{ckeys}" do
-    
     .control-group
       = f.label :unit_id, :class => 'control-label'
       .controls= f.collection_select :unit_id, Unit.is_depot.order(name: :desc), :id, :name, :include_blank => t('helpers.prompt.select_depot'), :html_options => {:class => 'selectpicker'}
@@ -22,7 +16,7 @@
       %li.active= link_to t('fuel_supplieds.title2'),        '#tab1', data: {toggle: 'tab'}
       %li= link_to t('fuel_issueds.title2'),  '#tab2', data: {toggle: 'tab'}
       %li= link_to t('fuel_balances.title2'),  '#tab3', data: {toggle: 'tab'}
- 
+    - @tanks=FuelTank.in_use.includes(:unit).includes(:fuel_type).order(:id) 
     #myTabContent.tab-content	
       #tab1.tab-pane.active
         .row
@@ -53,6 +47,7 @@
           .span8
             %font{:size => "-1"}
               =t 'helpers.prompt.balance'
+              %br=t 'helpers.prompt.select_depot_for_tanks'
         .form-group
           .col-lg-offset-2.col-lg-10
             = f.fields_for :fuel_balances do |builder|
@@ -64,3 +59,38 @@
       = f.submit (t 'helpers.links.submit'), :class => 'btn btn-primary'
       .btn.btn-default= link_to t('.cancel', :default => t("helpers.links.cancel")), |
         depot_fuels_path
+
+    .span{style: 'display: none;'}
+      = f.select :tanks_by_depot, FuelTank.by_depot, {include_blank:  (t 'helpers.prompt.select_fuel_tank')}
+
+:javascript
+
+  $('#depot_fuel_unit_id').change(function(){
+    var selected_depot=$('#depot_fuel_unit_id :selected').text();
+    var tank_select_fields=document.getElementsByClassName('test');
+    var abb=document.getElementById('depot_fuel_tanks_by_depot');
+    
+    /*alert(selected_depot);*/
+    /*alert(tank_select_fields.length);*/
+    
+    /*xyy.innerHTML = abb.innerHTML;*/
+    /*alert('mana'+$('#'+tank_select_fields[0].id).html());*/
+    
+    /*$('#'+tank_select_fields[0].id).html($("#depot_fuel_testone").html());*/
+    /*alert('mana2'+$('#'+tank_select_fields[0].id).html());*/
+    
+    for(i=0; i<tank_select_fields.length; i++)
+   {  
+      $('#'+tank_select_fields[i].id).html($("#depot_fuel_tanks_by_depot").html());
+      var nn=$('#'+tank_select_fields[i].id).html();
+      var options = $(nn).filter("optgroup[label='" + selected_depot + "']").html();
+      if (options)
+      {  
+        $('#'+tank_select_fields[i].id).html(options); 
+        $('#'+tank_select_fields[i].id).parent().show();
+      }
+      else
+      {  $('#'+tank_select_fields[i].id).empty();  }
+    } 
+     
+  });

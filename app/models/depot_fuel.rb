@@ -6,12 +6,12 @@ class DepotFuel < ActiveRecord::Base
   has_many :fuel_supplieds, dependent: :destroy
   accepts_nested_attributes_for :fuel_supplieds, allow_destroy: true, reject_if: proc { |fuel_supplieds| fuel_supplieds[:quantity].blank? }
   has_many :fuel_balances, dependent: :destroy
-  accepts_nested_attributes_for :fuel_balances, allow_destroy: true, reject_if: proc { |fuel_balances| fuel_balances[:fuel_tank_id].blank? }
+  accepts_nested_attributes_for :fuel_balances, allow_destroy: true, reject_if: proc { |fuel_balances| fuel_balances[:fuel_tank_id].blank? || fuel_balances[:current].blank? }
   
   validates_presence_of :unit_id, :issue_date
   validate :valid_unique_record, :issue_date_not_later_today
   
-  attr_accessor :tank, :current, :current2, :current3, :supplieds, :issueds #:capacity, :capacity2, :capacity3, #:prev_balance - not use
+  attr_accessor :tank, :current, :current2, :current3, :supplieds, :issueds, :tanks_by_depot #:capacity, :capacity2, :capacity3, #:prev_balance - not use
 
   def month_depot
     "#{depot.name} - #{issue_date.strftime("%b")} #{issue_date.year}"

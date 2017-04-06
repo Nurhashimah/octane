@@ -1013,6 +1013,7 @@ en:
       supplied: "* Total supplieds (receive) per month according to the fuel type"
       issued: "* Total issueds (usage) for each Receiving Unit in a month according to fuel type"
       balance: "* Current balance of fuel at the end of the month for each tank"
+      select_depot_for_tanks: "* Please select a depot for available fuel tanks list"
       summary: "* Stock balance of fuel at the end of the month for each fuel type"
       other_fuel: "* For fuel of type other than Diesel and Petrol"
       select_source1: Select Recepient

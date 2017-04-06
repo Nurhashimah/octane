@@ -1,13 +1,49 @@
 %fieldset
   .form-inline{role: "form"}
-    - fbkey=f.object.id.nil? ? f.object_id : f.object.id
-    - cache "#{@mkey}/fuel_balance-#{fbkey}" do
-      = f.collection_select :fuel_tank_id, @tanks, :id, :fuel_tank_details, :include_blank => (t 'helpers.prompt.select_fuel_tank'), :html_options => {:class => 'selectpicker'}
-      = f.text_field :current, :class => 'text_field input-small', :placeholder => 'Quantity'
-      = f.collection_select :unit_type_id, @unit_types, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
-      = f.hidden_field :_destroy
-      /not working yet - 1 Sept 2015
-      //= link_to_remove_fields (fa_icon "trash-o"), f     
-      //= link_to "Remove", "javascript:void(0);", :id => "remove_link"
-      //= link_to "Remove", "#", :onclick => "test( \"#{f.object}\");"
-      /= link_to "Remove", "#", :onclick => "test(this);"
+    = f.hidden_field :_destroy
+    /= f.collection_select :fuel_tank_id, @tanks, :id, :fuel_tank_details, :include_blank => (t 'helpers.prompt.select_fuel_tank'), :html_options => {:class => 'selectpicker'}
+    = f.select :fuel_tank_id, FuelTank.by_depot, {include_blank:  (t 'helpers.prompt.select_fuel_tank')}, {class: 'test'}   
+    = f.text_field :current, :class => 'text_field input-small', :placeholder => 'Quantity'
+    = f.collection_select :unit_type_id, @unit_types, :id, :description, :include_blank => (t 'helpers.prompt.select_unit_type'), :html_options => {:class => 'selectpicker'}
+    = link_to content_tag(:i, "", class: "fa fa-trash-o"), "#", class: "removing_fields"
+
+    
+:javascript
+  $('.removing_fields').click(function(){
+    var fieldset=$(this).parent().parent();
+    var form=$(this).parent();
+    var all_fields=form.children();
+    var destroyer=all_fields[0];
+    destroyer.value=true;    
+    fieldset.hide();
+  });
+ 
+  var selected_depot=$('#depot_fuel_unit_id :selected').text();
+  
+  $('.test').each(function(){
+    
+    /*var label = $(this.options[this.selectedIndex]).closest('optgroup').prop('label');*/
+    var tag_sel=$(this).prop('tagName');
+    
+    if (tag_sel=='SELECT')
+    {
+      var tag_opt=$(this.options[this.selectedIndex]);                                                                            /*tag_name=tag_opt.prop('tagName'));*/                         /*OPTION*/
+      var node=$(this.options[this.selectedIndex]).closest('optgroup');
+      node_name=node.prop('nodeName');                                                                                            /*OPTGROUP or undefined*/
+      if ((node_name=='OPTGROUP') || (tag_opt.val()==''))                                                                     /*new fieldset - add more, saved 1 must hv value*/
+      {
+        var objectid=$(this).attr('id');
+        var nn=$('#'+objectid).html();
+        var options = $(nn).filter("optgroup[label='" + selected_depot + "']").html();
+        if (options)
+        {  
+          $(this).html(options); 
+          $(this).parent().show();
+        }
+        else
+        {  $(this).empty();  }
+      }
+    }/* END for if ta=='SELECT' */
+    
+  });
+  
