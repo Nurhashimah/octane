@@ -1,5 +1,6 @@
 class FuelTank < ActiveRecord::Base
   before_save :set_default_maximum
+  before_destroy :restrict_related_exist
   belongs_to :unit,   :class_name => "Unit",   :foreign_key => "unit_id"
   belongs_to :unittype,   :class_name => "UnitType",   :foreign_key => "unit_type"
   belongs_to :fuel_type,   :class_name => "FuelType",   :foreign_key => "fuel_type_id"
@@ -72,6 +73,14 @@ class FuelTank < ActiveRecord::Base
       arr << [unit.name, y]
     end
     arr
+  end
+  
+  def restrict_related_exist
+    if unit.depot_fuels.count > 0
+      return false
+    else
+      return true
+    end
   end
   
 end

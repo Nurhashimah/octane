@@ -71,10 +71,17 @@ class FuelTanksController < ApplicationController
   # DELETE /fuel_tanks/1
   # DELETE /fuel_tanks/1.json
   def destroy
-    @fuel_tank.destroy
-    respond_to do |format|
-      format.html { redirect_to fuel_tanks_url }
-      format.json { head :no_content }
+    if @fuel_tank.destroy
+      respond_to do |format|
+        format.html { redirect_to fuel_tanks_url }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+	flash.discard
+        format.html { redirect_to @fuel_tank, notice: "Removal is prohibited. Depot fuel record(s) for depot of this storage tank still exist."}
+        format.json { head :no_content }
+      end
     end
   end
 
