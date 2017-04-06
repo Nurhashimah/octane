@@ -3,8 +3,6 @@
 
   %h5 *Selecting a Unit shall indicates current Vessel is a UNIT of a selected unit name
 
-  /- cache "#{main_chkey(@vessel)}#{chkeys([Unit, Vessel, VesselCategory])}" do   #w/o cache: 20-34ms, w cache: 19-33ms
-
   .form-group
     = f.label :unit_id, class: 'col-sm-2 control-label'
     /- units_for= Unit.is_vessel.where.not(id: Vessel.where.not(unit_id: @vessel.unit_id).pluck(:unit_id))
